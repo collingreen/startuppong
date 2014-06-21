@@ -53,28 +53,25 @@
 
                     <div class="row">
                       <div class="col-xs-12 ">
-                        <h1>TechPong - All the pingpong you ever wanted</h1>
+                        <h1>TechPong - Such PingPong. Very Tech.</h1>
                         <p>TechPong manages and displays your company ping pong
                         ladder using either direct challenge or ELU ratings.
                         Sign up and start playing immediately!</p>
                         <div id="slider" class="nivoSlider">
-                          <img src="{% static 'img/slide1.png' %}" alt="" title="#slide1_caption" />
+                          <img src="{% static 'img/techpong_ladder_frame.png' %}" alt="" title="#slide1_caption" />
+                          <img src="{% static 'img/techpong_match_frame.png' %}" alt="" title="#slide2_caption"/>
+                          <img src="{% static 'img/techpong_history_frame.png' %}" alt="" title="#slide3_caption" />
+                        </div>
                           <div id="slide1_caption" class="nivo-html-caption">
                             Visually see your entire ladder, ordered by rank or rating.
                           </div>
-                          <img src="{% static 'img/slide2.jpg' %}" alt="" title="#slide2_caption"/>
                           <div id="slide2_caption" class="nivo-html-caption">
-                            Customize your ladder to fit how you play - display ranks, ratings, or both.
+                            See every player and match in the company at a glance
+                            or view all the details about just one player at a time.
                           </div>
-                          <img src="{% static 'img/slide3.jpg' %}" alt="" />
                           <div id="slide3_caption" class="nivo-html-caption">
-                            Signing up, adding players, and logging matches is just a few clicks away.
+                            History graphs show how each player's rank and rating change over time.
                           </div>
-                          <img src="{% static 'img/slide4.jpg' %}" alt="" />
-                          <div id="slide3_caption" class="nivo-html-caption">
-                            Responsive design displays your ladder on everything from a bigscreen by the table to each player's mobile.
-                          </div>
-                        </div>
                       </div><!-- /.col -->
                     </div>
                     <!-- top row -->
@@ -90,7 +87,9 @@
   <script type='text/javascript'>
     $ = jQuery;
     $(window).load(function() {
-      $('#slider').nivoSlider();
+        $('#slider').nivoSlider({
+          pauseTime: 5000
+        });
     });
   </script>
   {% endblock additional_js %}
