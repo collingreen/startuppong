@@ -1,0 +1,147 @@
+{% extends 'techpong/base.html' %}
+
+{% block content %}
+      <div class="wrapper">
+            <!-- Left side column. contains the logo and sidebar -->
+
+            <!-- Right side column. Contains the navbar and content of the page -->
+            <aside class="right-side strech">
+                <!-- Content Header (Page header) -->
+
+                <!-- Main content -->
+                <section class="content">
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <h1><a href="{% url 'dashboard' company_name=player.company.short_name %}" class='btn'>Back to {{player.company.name}}</a></h1>
+                    </div>
+                  </div>
+
+                    <!-- Main row -->
+                    <div class="row">
+                        <section class="col-sm-12">
+                            <!-- Chat box -->
+                            <div class="box box-success">
+                              <div class="box-body chat" id="chat-box">
+                                <div class="row">
+                                  <div class="col-sm-4"><h1>{{player.name}}</h1></div>
+                                  <div class="col-sm-4">
+                                    <h2>Current Rank: {{player.rank or ''}}
+                                    {% if player.company.show_rank %}
+                                    <span class='player_sparkline_rank' values="{{player.rank_sparkline}}"></span>
+                                    {% endif %}
+                                  </h2>
+                                  </div>
+                                  <div class="col-sm-4">
+                                    {% if player.company.show_rating %}
+                                    <h2>Current Rating: {{"%.02f"|format(player.rating)}}
+                                    <span class='player_sparkline_ratings' values="{{player.ratings_sparkline}}"></span>
+                                    {% endif %}
+                                  </h2>
+                                  </div>
+                                </div>
+                              </div><!-- /.chat -->
+                            </div><!-- /.box (chat box) -->
+
+                        </section><!-- right col -->
+                    </div><!-- /.row (main row) -->
+
+                    <div class="row">
+                        <section class="col-md-12">
+                            <!-- Chat box -->
+                            <div class="box box-primary">
+                              <div class="box-header">
+                                <h3 class="box-title box-title-full">Recent Matches</h3>
+                              </div>
+                                <div class="box-body chat matches" id="chat-box">
+                                  {% for match in player.get_recent_matches() %}
+                                    {% with player.company as company %}
+                                      {% include 'techpong/partials/match_row.html' %}
+                                    {% endwith %}
+                                  {% endfor %}
+                                </div><!-- /.chat -->
+                            </div><!-- /.box (chat box) -->
+                        </section><!-- right col -->
+                    </div>
+
+                    <!-- Main row -->
+                    <div class="row">
+                        {% if player.company.show_rank %}
+                        <section class="col-md-{% if player.company.show_rating %}6{% else %}12{% endif %}">
+                            <!-- Chat box -->
+                            <div class="box box-primary">
+                              <div class="box-header">
+                                <h3 class='box-title'>Rank History</h3>
+                              </div>
+                              <div class="box-body chat" id="">
+                                <div id="rank_history_graph"></div>
+                              </div><!-- /.chat -->
+                            </div><!-- /.box (chat box) -->
+                        </section><!-- right col -->
+                        {% endif %}
+                        {% if player.company.show_rating %}
+                        <section class="col-md-{% if player.company.show_rank %}6{% else %}12{% endif %}">
+                            <!-- Chat box -->
+                            <div class="box box-primary">
+                              <div class="box-header">
+                                <h3 class="box-title">Rating History</h3>
+                              </div>
+                              <div class="box-body chat" id="">
+                                <div id="rating_history_graph"></div>
+                              </div><!-- /.chat -->
+                            </div><!-- /.box (chat box) -->
+                        </section><!-- right col -->
+                        {% endif %}
+                    </div><!-- /.row (main row) -->
+
+                </section><!-- /.content -->
+            </aside><!-- /.right-side -->
+        </div><!-- ./wrapper -->
+        {% endblock content %}
+
+{% block additional_js %}
+<script type='text/javascript'>
+  $(document).on('ready', function(){
+      $('.player_sparkline_results').sparkline('html', {type: 'tristate'});
+      $('.player_sparkline_ratings').sparkline();
+      $('.player_sparkline_rank').sparkline();
+
+      {% if player.company.show_rank %}
+      // rank graph
+      var rank_chart = new Morris.Area({
+        element: 'rank_history_graph',
+        resize: true,
+        data: [
+        {% for info in cached_ranks %}
+        {
+          rank: {{info.rank}},
+          time: {{info.played_timestamp*1000}}
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+        ],
+        xkey: 'time',
+        ykeys: ['rank'],
+        labels: ['Rank'],
+      });
+      {% endif %}
+
+      {% if player.company.show_rating %}
+      // rating graph
+      var rating_chart = new Morris.Area({
+        element: 'rating_history_graph',
+        resize: true,
+        data: [
+        {% for info in cached_ratings %}
+        {
+          rating: {{info.rating}},
+          time: {{info.played_timestamp*1000}}
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+        ],
+        xkey: 'time',
+        ykeys: ['rating'],
+        labels: ['Rating'],
+      });
+      {% endif %}
+  });
+</script>
+{% endblock additional_js %}

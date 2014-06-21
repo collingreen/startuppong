@@ -1,0 +1,16 @@
+
+.error { color: red; }
+
+.clickable { cursor: pointer; }
+.header-image { min-height: 110px; }
+
+#company_header { position: absolute;  }
+
+.ladder, .matches { font-size: 130%; }
+
+.box-tools .btn { margin: 5px; }
+
+.modal { bottom: inherit; overflow-y: visible; } /* why is this needed? modal continues to bottom otherwise */
+
+.box .box-header .box-title { font-weight: bold; }
+.box .box-header .box-title-full { width: 100%; }

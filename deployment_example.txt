@@ -1,0 +1,289 @@
+#
+# These are the exact commands I ran when setting up the demo app I used to test
+# all the new changes and fixes for this version of djeroku. This example goes
+# all the way from nothing to a working dev setup and fully deployed staging and production
+# environments on heroku, including the new heroku pipelines.
+#
+# NOTE: this was done on a windows machine - adjust as necessary (espcially venv activate)
+# again, look at the djeroku readme
+#
+# When this inevitably breaks, send me an email with a working fix at
+# maintainer@djeroku.com
+#
+
+# All the ridiculous subfolders with the same name can get confusing. You can
+# alleviate this by 1. putting the entire project into a different named folder,
+# 2. using a different named app inside of the project, and 3. putting your
+# venv folder at the same level as the manage.py file instead of a folder above it.
+# That being said, it isn't that bad once you spend a bit of time in it (the top
+# level folder simply holds your project and your venv, below that is the
+# folder holding your manage.py and all the deployment information, and
+# finally, below that is where all the code actually lives. You'll spend 95%
+# of your time all the way down in the apps folder.
+
+# For clarity (lol) and reference, here is an overview of what the file system
+# will look like when everything is done
+
+# my-development-folder
+# |-- djeroku_site
+#    |-- venv  (the virtual environment for this project)
+#    |-- djeroku_site (the folder containing everything - this will be put in git)
+#       |-- requirements.txt (heroku will look at this, which leads to the production requirements)
+#       |-- reqs (holds the requirements files for dev vs production)
+#       |-- Procfile (defines the web, scheduler, and worker processes - also how heroku knows this is a python project)
+#       |-- gunicorn.py.ini (the setup file for the web server, gunicorn)
+#       |-- wsgi.py (the python wsgi file that gunicorn actually uses)
+#       |-- fabfile.py (the fabric script that helps set everything up on heroku)
+#       |-- manage.py (the django script that, well, manages everything)
+#       |-- djeroku_site (the folder containing the code)
+#          |-- libs (holds all the 'extras' djeroku provides - look through them, some are quite helpful)
+#          |-- settings (all the settings for dev vs production)
+#          |-- static (this is where all the static assets will be collected - generally don't add anything here directly)
+#          |-- templates (templates that do not belong in an app go here - djeroku comes with a default 404 and 500)
+#          |-- apps (the folder that will contain all the individual apps you write)
+#             |-- djeroku_site (finally, the app that actually drives the site -- will have all the models, tests, templates etc)
+#             |-- djeroku (an app with some helpful filters and functions)
+
+
+Pre-Setup
+==========
+
+## get everything installed first, however works for your system
+## check out the djeroku readme, quickstart section for more details
+
+# install pip, setuptools, git, and virtualenv on your system
+sudo apt-get install pip, setuptools, git
+sudo pip install virtualenv
+
+## on windows
+## http://www.pip-installer.org/en/latest/installing.html
+## downloaded latest ez_setup.py from setuptools pypi page
+## python ez_setup.py
+## downloaded https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+## python get-pip.py
+## pip install virtualenv
+
+
+
+Setup
+=====
+
+# make project directory and virtual environment
+mkdir djeroku_site
+virtualenv djeroku_site/venv
+
+# activate virtual environment
+djeroku_site/venv/scripts/activate
+
+# install django 1.5.x -- notice the quotes
+pip install "django>=1.5,<1.6"
+
+
+Creating the Project
+====================
+
+# create django project, using the newly installed django-admin.py and djeroku template
+# since django-admin.py doesn't let you use an already created directory, the directory
+# structure for this is going to get a little ridiculous with nested 'djeroku_site's.
+# NOTE: if you forget the --extension flag, the 404 and 500 templates won't work with their styled additions
+cd djeroku_site
+python venv/Scripts/django-admin.py startproject --template=path/to/djeroku --extension=py,html djeroku_site
+
+# cd into the new djeroku_site project directory
+cd djeroku_site
+
+# use pip to install the dev requirements -- doing this on windows sucks, so you're on your own
+# my only suggestion is to take those really stubborn requirements and install them with a
+# pre-built windows installer, then copy their site-packages folder and egg into your
+# venv. This is super dirty -- I recommend developing on linux instead.
+pip install -r reqs/dev.txt
+
+
+Creating an App
+===============
+
+# change to the apps folder
+cd djeroku_site/apps
+
+# create the djeroku_site app (our FOURTH djeroku_site folder) INSIDE THE APPS FOLDER
+# using the djeroku_app template
+# NOTICE THE --extension flag! If you don't include this, the default templates
+#  will not be copied correctly and will not work
+# this isn't a huge deal, since you will probably be replacing these anayway, just be aware
+python ../../../venv/Scripts/django-admin.py startapp --template=path/to/djeroku_app --extension=py,html djeroku_site
+
+# now, from the project root (djeroku_site/djeroku_site/djeroku_site) go to settings/common.py
+# and add the new djeroku_site app to the LOCAL_APPS tuple
+# don't forget the apps. on the front or the , on the back
+LOCAL_APPS = (
+    'apps.djeroku_site',
+)
+
+# next, hook up the app urls in the project urls.py by adding this line as the
+# first item inside the urlpatters call (before the admin urls,
+# but it either way should work)
+
+    url(r'', include('apps.djeroku_site.urls')),
+
+
+
+
+Set Everything Up Locally
+=========================
+# first, navigate back up to the djeroku_site folder that holds manage.py
+cd ../..
+
+# create the dev database
+python manage.py syncdb
+
+# apply migrations
+python manage.py migrate
+
+# collect static
+python manage.py collectstatic --noinput
+
+# run the dev server
+python manage.py runserver
+
+# test it by going to 127.0.0.1:8000 and confirming you can see the Djeroku hello world page
+
+# test 404 -- turn off debug and go to 127.0.0.1:8000/404 (any page that doesn't exist in urls.py)
+# test 500 -- turn off debug and break a setting, like setting ALLOWED_HOSTS to an empty list, then going to any page
+# to test my 500 without breaking EVERYTHING, I added a simple view (and the url that points to it) that raises an Exception
+
+# for the djeroku_site I enabled the styled djeroku 404 and 500 pages (the meerkat and the swimming pig)
+# and uncommented the extra content and filled it out a bit
+    # in 404.html, change the body class to 'meerkat'
+    # in 500.html, change the body class to 'pig'
+    # you can use these if you like, but they may not be professional enough for a 'real' site
+    # they do, however, make me laugh quite hard
+
+
+Put it in a repository
+======================
+# go back to the project root (where manage.py is)
+cd ../..
+
+# I need to create a repository at this step so I can do the next step
+# but that is not normally required and the fabric file setup will
+# create your repository instead if you like. Either way, doing it here won't hurt.
+git init .
+
+
+Heroku Setup
+============
+
+# First, go to heroku.com and download the heroku toolbelt, which includes
+# the heroku command line interface required for the rest of this to work.
+
+# I have to manage lots of different heroku accounts, so to make that a little easier
+# I'm using the heroku-accounts plugin. Using this, I add this project to my iwanttocode account
+# You probably won't have to do anything like this
+heroku accounts:set iwanttocode
+
+
+Use the Fabric Script to Create EVERYTHING
+------------------------------------------
+
+# The fabfile in the top project directory has a useful function that basically
+# handles the entire heroku setup process for you, including creating two
+# (nearly) identical environments (staging and production), a bunch of free
+# addons for each, and a deployment pipeline from staging to production. You
+# should really have a look in the file to see what is happening under the hood.
+# You can easily edit the addons or environment variables you want set inside the file.
+
+fab heroku_setup
+
+# There are several prompts along the way and it will warn you if something fails.
+# The most frustrating part of the entire process (assuming it works) is that
+# django projects require underscores not dashes, and heroku requires dashes
+# not underscores.
+# NOTE - the heroku_setup script generates a new SECRET_KEY for your production
+# app and sets it in the production environment.
+
+# I created a git repository earlier because I needed it to set my heroku account,
+# but if you didn't do that, the setup script did it for you. You can check by calling:
+git status
+
+
+Commit it?
+==========
+# This may not be worth committing yet, but let's have an example anyway
+git add .
+git commit -m="Initial Djeroku Template Commit"
+
+
+Push to Staging
+===============
+# Now that we have a commit, we can push it to our staging app on heroku
+git push staging master
+
+# yep, that's it! Heroku will churn away and crunch our commit into a
+# working 'app slug' and turn our new staging app on.
+
+# we'll need to do the same setup on staging as we did for dev, namely
+# creating the database tables, migrating the apps, and collecting static
+heroku run python manage.py syncdb --app=djeroku-site-staging
+heroku run python manage.py migrate --app=djeroku-site-staging
+heroku run python manage.py collectstatic --noinput --app=djeroku-site-staging
+# if you watch the output of collectstatic on production you can see django-pipeline
+# post-processing everything and adding the versioning hashes to each filename - cool
+
+# NOTE: you can tell heroku which app to use by default, but I like to leave
+# it as explicitly required, so I never accidentally do something on the wrong
+# app
+
+# see the app by going to djeroku-site-staging.herokuapp.com in a browser
+# OOPS! Failure! I opened up my new relic dashboard for the staging app
+# from my heroku account, clicked events, then errors, and immedately could
+# tell that I clearly forgot to put my new url in tho ALLOWED_HOSTS setting.
+# I add the urls for both staging and production, commit, and push to staging again.
+# NOTE! You MUST prefix your ALLOWED_HOSTS paths with a . to have them work in heroku!
+# djeroku-site-staging.herokuapp.com will NOT work, .djeroku-site-staging.herokuapp.com WILL
+git add .
+git commit -m="Added heroku urls to ALLOWED_HOSTS setting"
+git push staging master
+
+# Opening the page again, and everything works! Hooray!
+# At this point, I test all my pages (the index, 404, 500,
+# login, and some views I wrote to test the djeroku templatetags).
+# Next I confirm that all the parts I THINK are working actually ARE
+# working -- /admin, /nexus, and connecting to redis using the
+# libs/djeroku/djeroku_redis lib.
+heroku run python manage.py shell
+from libs.djeroku.djeroku_redis import redis_connection
+r = redis_connection()
+r.set('test', 'does it work?')
+r.get('test')
+>>> 'does it work?'
+r.expire('test',1)
+...
+r.get('test')
+>>>
+# woohoo! (djeroku_redis is a fun little script that uses the environment
+# variables set by the heroku redis addons to magically set the connection
+# up based on which addon is available. As you can see, it "Just Works".)
+
+
+# Now that I feel confident that the site is working in staging, I can
+# take advantage of the pipeline created by the heroku_setup script and simply
+# promote the slug from staging downstream to production.
+heroku pipeline:promote --app=djeroku-site-staging
+
+# I trepidatiously point my browser to the production url, djeroku-site.herokuapp.com
+# (trepidatiously because this was my first time ever even USING a pipeline!)
+# and, success! Everything is already working as expected, and it was MUCH
+# faster than redeploying the commit (and less error prone).
+# NOTE: you CAN push directly to production, just like staging, with
+# git push production master
+
+
+# Now, if this was a public app, I would leave it up (and probably set up
+# a real domain pointing to it, not just the .herokuapp.com one), but for
+# now I put both apps into maintenance mode using the heroku command line.
+# I generally keep my staging apps in maintenance always, unless I'm actively
+# testing on them.
+heroku maintenance:on --app=djeroku-site-staging
+heroku maintenance:on --app=djeroku-site
+
+# a quick check with the browser shows them both in maintenance, safe and sound

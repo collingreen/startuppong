@@ -1,0 +1,12 @@
+-r common.txt
+django-heroku-memcacheify==0.3
+django-heroku-postgresify==0.2
+django-heroku-redisify==0.2.1
+hiredis==0.1.1
+gevent==0.13.8
+gunicorn==0.14.3
+newrelic==2.8.0.7
+psycopg2==2.4.5
+cssmin==0.1.4
+jsmin==2.0.2
+mandrill>=1.0.6,<2.0

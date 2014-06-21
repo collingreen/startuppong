@@ -1,0 +1,96 @@
+{% extends 'techpong/base.html' %}
+
+{% block content %}
+<div class="wrapper">
+            <!-- Left side column. contains the logo and sidebar -->
+
+            <!-- Right side column. Contains the navbar and content of the page -->
+            <aside class="right-side strech">
+
+                <!-- Main content -->
+                <section class="content">
+
+                    <!-- Small boxes (Stat box) -->
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <!-- small box -->
+                            <div class="small-box bg-green">
+                                <div class="inner">
+                                  <h3>{{total_companies}}</h3>
+                                  <p>Companies Playing</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-stats-bars"></i>
+                                </div>
+                            </div>
+                        </div><!-- ./col -->
+                        <div class="col-xs-4">
+                            <!-- small box -->
+                            <div class="small-box bg-aqua">
+                                <div class="inner">
+                                  <h3>{{total_matches}}</h3>
+                                  <p>Matches Completed</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-pie-graph"></i>
+                                </div>
+                            </div>
+                        </div><!-- ./col -->
+                        <div class="col-xs-4">
+                            <!-- small box -->
+                            <div class="small-box bg-yellow">
+                                <div class="inner">
+                                  <h3>{{total_players}}</h3>
+                                  <p>Players</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-person"></i>
+                                </div>
+                            </div>
+                        </div><!-- ./col -->
+                    </div><!-- /.row -->
+
+
+                    <div class="row">
+                      <div class="col-xs-12 ">
+                        <h1>TechPong - All the pingpong you ever wanted</h1>
+                        <p>TechPong manages and displays your company ping pong
+                        ladder using either direct challenge or ELU ratings.
+                        Sign up and start playing immediately!</p>
+                        <div id="slider" class="nivoSlider">
+                          <img src="{% static 'img/slide1.png' %}" alt="" title="#slide1_caption" />
+                          <div id="slide1_caption" class="nivo-html-caption">
+                            Visually see your entire ladder, ordered by rank or rating.
+                          </div>
+                          <img src="{% static 'img/slide2.jpg' %}" alt="" title="#slide2_caption"/>
+                          <div id="slide2_caption" class="nivo-html-caption">
+                            Customize your ladder to fit how you play - display ranks, ratings, or both.
+                          </div>
+                          <img src="{% static 'img/slide3.jpg' %}" alt="" />
+                          <div id="slide3_caption" class="nivo-html-caption">
+                            Signing up, adding players, and logging matches is just a few clicks away.
+                          </div>
+                          <img src="{% static 'img/slide4.jpg' %}" alt="" />
+                          <div id="slide3_caption" class="nivo-html-caption">
+                            Responsive design displays your ladder on everything from a bigscreen by the table to each player's mobile.
+                          </div>
+                        </div>
+                      </div><!-- /.col -->
+                    </div>
+                    <!-- top row -->
+                    <!-- /.row -->
+
+                </section><!-- /.content -->
+            </aside><!-- /.right-side -->
+          </div><!-- ./wrapper -->
+          {% endblock content %}
+
+
+  {% block additional_js %}
+  <script type='text/javascript'>
+    $ = jQuery;
+    $(window).load(function() {
+      $('#slider').nivoSlider();
+    });
+  </script>
+  {% endblock additional_js %}

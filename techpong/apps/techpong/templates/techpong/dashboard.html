@@ -1,0 +1,297 @@
+{% extends 'techpong/base.html' %}
+
+{% block content %}
+      <div class="wrapper">
+            <!-- Left side column. contains the logo and sidebar -->
+
+            <!-- Right side column. Contains the navbar and content of the page -->
+            <aside class="right-side strech">
+                <!-- Content Header (Page header) -->
+
+                <!-- Main content -->
+                <div id="alert_container"></div>
+
+                <section class="content">
+                    <div class="row">
+                      <div class="col-lg-10">
+                      </div>
+                    </div>
+
+                    <!-- Main row -->
+                    <div class="row">
+                        <!-- Left col -->
+                        <section class="col-lg-8 col-md-12 connectedSortable">
+
+                            <!-- Map box -->
+                            <div class="box box-primary">
+                                <div class="box-header">
+                                <div class="pull-right box-tools">
+                                  <button class="btn btn-success pull-right" data-toggle="modal" data-target="#addMatchModal" title="Add a Match" data-tooltip>
+                                      <div class='fa fa-plus'></div>
+                                  </button>
+                                  <button class="btn btn-success pull-right" data-toggle="modal" data-target="#addPlayerModal" title="Add a New Player" data-tooltip>
+                                      <div class='ion ion-person-add'></div>
+                                  </button>
+                                </div>
+                                    <i class="fa fa-map-marker"></i>
+                                    <h3 class="box-title">Ladder</h3>
+                                </div>
+                                <div class="box-body no-padding">
+                                    <div class="table-responsive">
+
+                                        <!-- .table - Uses sparkline charts-->
+                                        <table class="table table-striped ladder">
+                                            <tr>
+                                                <th></th>
+                                                <th>Player</th>
+                                                <th>Recent Games</th>
+                                                {% if company.show_rank %}
+                                                <th>Rank History</th>
+                                                {% endif %}
+                                                {% if company.show_rating %}
+                                                <th>Rating History</th>
+                                                {% endif %}
+                                            </tr>
+                                            {% for player in info.players %}
+                                            <tr class='player' data-player-id='{{player.id}}'>
+                                              <td><div class='player_ranking'>{{player.rank or ''}}</div></td>
+                                              <td><div class='player_name'><a href="{% url 'player' company_name=company.short_name,player_id=player.id %}">{{player.name}} {% if company.show_rating %}({{'%.02f'|format(player.rating)}}){% endif %}</a></div></td>
+                                              <td><div class='player_sparkline_results' values="{{player.results_sparkline}}"></div></td>
+                                              {% if company.show_rank %}
+                                              <td><div class='player_sparkline_rank' values="{{player.rank_sparkline}}"></div></td>
+                                              {% endif %}
+                                              {% if company.show_rating %}
+                                              <td><div class='player_sparkline_ratings' values="{{player.ratings_sparkline}}"></div></td>
+                                              {% endif %}
+                                            </tr>
+                                            {% endfor %}
+                                        </table><!-- /.table -->
+                                    </div>
+                                </div><!-- /.box-body-->
+                                <div class="box-footer">
+                                </div>
+                            </div>
+                            <!-- /.box -->
+
+                        </section><!-- /.Left col -->
+
+                        <!-- right col -->
+                        <section class="col-lg-4 col-md-12 connectedSortable">
+                            <!-- Chat box -->
+                            <div class="box box-success">
+                                <div class="box-header">
+                                    <h3 class="box-title"><i class="fa fa-comments-o"></i> Recent Matches</h3>
+                                   <!--
+                                    <div class="box-tools pull-right">
+                                        <ul class="pagination pagination-sm inline">
+                                            <li><a href="#">&laquo;</a></li>
+                                            <li><a href="#">1</a></li>
+                                            <li><a href="#">2</a></li>
+                                            <li><a href="#">3</a></li>
+                                            <li><a href="#">&raquo;</a></li>
+                                        </ul>
+                                      </div>
+                                      -->
+                                </div>
+                                <div class="box-body chat matches" id="chat-box">
+                                  {% for match in info.recent_matches %}
+                                    {% include 'techpong/partials/match_row.html' %}
+                                  {% endfor %}
+                                </div><!-- /.chat -->
+                            </div><!-- /.box (chat box) -->
+
+                        </section><!-- right col -->
+                    </div><!-- /.row (main row) -->
+
+                </section><!-- /.content -->
+            </aside><!-- /.right-side -->
+          </div><!-- ./wrapper -->
+
+
+<div class="modal fade" id="addMatchModal" tabindex="-1" role="dialog" aria-labelledby="addMatchModalLabel" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="addMatchModalLabel">Add New Match</h4>
+      </div>
+      <div class="modal-body">
+
+      <div class="row">
+        <div class="col-xs-2">
+          Winner:
+        </div>
+        <div class="col-xs-10">
+          <select id='addMatchWinner' class='player_select'>
+            <option value=''>-----</option>
+          </select>
+        </div>
+        <div class="col-xs-2">
+          Loser:
+        </div>
+        <div class="col-xs-10">
+          <select id='addMatchLoser' class='player_select'>
+            <option value=''>-----</option>
+          </select>
+        </div>
+      </div>
+
+      </div>
+       <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="addMatchModalSave">Add Match</button>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addPlayerModal" tabindex="-1" role="dialog" aria-labelledby="addPlayerModalLabel" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="addMatchModalLabel">Add New Player</h4>
+      </div>
+      <div class="modal-body">
+
+      <div class="row">
+        <div class="col-md-6">
+          Name:
+          <input id="addPlayerName"/>
+        </div>
+      </div>
+
+      </div>
+       <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="addPlayerSave">Add Player</button>
+      </div>
+    </div>
+</div>
+        {% endblock content %}
+
+{% block additional_js %}
+<script type='text/javascript'>
+
+  $(document).on('ready', function(){
+      $('.player_sparkline_results').sparkline('html', {type: 'tristate'});
+      $('.player_sparkline_ratings').sparkline();
+      $('.player_sparkline_rank').sparkline();
+
+      $('#addMatchModalSave').on('click', function(){
+        var winner = $('#addMatchWinner').val();
+        var loser = $('#addMatchLoser').val();
+
+        // validate selected players
+        if (winner <= 0 || loser <= 0 || !winner || !loser || winner == loser) {
+          showError("Stop trying to break the system");
+          $("#addMatchModal").modal("hide");
+          return;
+        }
+
+        // send to server
+        $.ajax("{% url 'ajax_add_match' company_name=company.short_name %}", {
+          method: "POST",
+          headers: {"X-CSRFToken": "{{ csrf_token|safe() }}"},
+          data: {
+            winner: winner,
+            loser: loser
+          },
+          success: function(response) {
+            if (response.success) {
+              // todo: update without reload
+              window.location.reload();
+              //$("#addMatchModal").find(".player_select").val(0);
+              //$("#addMatchModal").modal("hide");
+            }
+            else {
+              var error_message = "There was an error while creating the match. Go yell at whoever set this up.";
+              if (response.error_message) {
+                error_message = response.error_message;
+              }
+              showError(error_message);
+              $("#addMatchModal").modal("hide");
+            }
+          },
+          failure: function(response) {
+            showError("Error creating match. Go yell at whoever set this up.");
+            $("#addMatchModal").modal("hide");
+          }
+        });
+      });
+
+      $('#addPlayerSave').on('click', function(){
+        var name = $('#addPlayerName').val();
+
+        // validate player name
+        if (!name) {
+          showError("Stop trying to break the system");
+          $("#addPlayerModal").modal("hide");
+          return;
+        }
+
+        // send to server
+        $.ajax("{% url 'ajax_add_player' company_name=company.short_name %}", {
+          method: "POST",
+          headers: {"X-CSRFToken": "{{ csrf_token|safe() }}"},
+          data: {
+            name: name
+          },
+          success: function(response) {
+            if (response.success) {
+              // todo: update without reload
+              window.location.reload();
+              //$("#addPlayerModal").find(".player_select").val(0);
+              //$("#addPlayerModal").modal("hide");
+            }
+            else {
+              var error_message = "There was an error while adding the new player. Go yell at whoever set this up.";
+              if (response.error_message) {
+                error_message = response.error_message;
+              }
+              showError(error_message);
+              $("#addPlayerModal").modal("hide");
+            }
+          },
+          failure: function(response) {
+            showError("Error creating new player. Go yell at whoever set this up.");
+            $("#addPlayerModal").modal("hide");
+          }
+
+        });
+
+      });
+
+      // populate player selectors
+      var players = {{info.players_json|safe()}};
+      var option;
+      for( var i = 0; i < players.length; i++) {
+        option = $("<option/>").val(players[i].id).text(players[i].name);
+        $(".player_select").append(option);
+      }
+  });
+
+  function showError(message) {
+    showAlert(message, 'alert-danger');
+  }
+
+  function showSuccess(message) {
+    showAlert(message, 'alert-success');
+  }
+
+  function showAlert(message, alert_class) {
+    var alert_div = $('<div/>').addClass('alert '+alert_class).text(message);
+    alert_div.append(
+      $('<button/>')
+        .addClass('close fade in')
+        .attr({
+          'data-dismiss': 'alert',
+          'aria-hidden': 'true'
+        })
+        .html("&times;")
+    );
+    alert_div.appendTo($('#alert_container'));
+    alert_div.alert();
+
+    setTimeout(function(){ alert_div.alert('close'); }, 3500);
+  }
+
+</script>
+{% endblock additional_js %}

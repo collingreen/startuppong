@@ -1,0 +1,135 @@
+{% load compressed %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>TechPong.co | Dashboard</title>
+        <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+        <!-- bootstrap 3.0.2 -->
+        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+        <!-- font Awesome -->
+        <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css" />
+        <!-- Ionicons -->
+        <link href="{% static 'css/ionicons.min.css' %}" rel="stylesheet" type="text/css" />
+        <!-- Morris chart -->
+        <link href="{% static 'css/morris/morris.css' %}" rel="stylesheet" type="text/css" />
+        <!-- jvectormap -->
+        <link href="{% static 'css/jvectormap/jquery-jvectormap-1.2.2.css' %}" rel="stylesheet" type="text/css" />
+        <!-- fullCalendar -->
+        <link href="{% static 'css/fullcalendar/fullcalendar.css' %}" rel="stylesheet" type="text/css" />
+        <!-- Daterange picker -->
+        <link href="{% static 'css/daterangepicker/daterangepicker-bs3.css' %}" rel="stylesheet" type="text/css" />
+        <!-- bootstrap wysihtml5 - text editor -->
+        <link href="{% static 'css/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css' %}" rel="stylesheet" type="text/css" />
+        <!-- Theme style -->
+        <link href="{% static 'css/AdminLTE.css' %}" rel="stylesheet" type="text/css" />
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+          <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+      {% block favicon %}
+        <link rel="shortcut icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+      {% endblock %}
+      {% block appletouchicon %}
+        <link rel="apple-touch-icon" href="{% static 'apple-touch-icon.png' %}"/>
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{% static 'apple-touch-icon-144x144-precomposed.png' %}"/>
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{% static 'apple-touch-icon-114x114-precomposed.png' %}"/>
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{% static 'apple-touch-icon-72x72-precomposed.png' %}"/>
+        <link rel="apple-touch-icon-precomposed" href="{% static 'apple-touch-icon-precomposed.png' %}"/>
+      {% endblock appletouchicon %}
+
+          {% block external_css %}
+          <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+          <!--<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/spacelab/bootstrap.min.css" rel="stylesheet"> -->
+          <!--<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/cyborg/bootstrap.min.css" rel="stylesheet"> -->
+          {% endblock external_css %}
+
+      {% block css %}
+        {% compressed_css 'base' %}
+      {% endblock css %}
+
+      {% block head_js %}{% endblock head_js %}
+
+      {% block extra_head %}
+      {% endblock extra_head %}
+    </head>
+    <body class="skin-black">
+        {% block browser_warning %}
+            <!--[if lt IE 7]>
+                <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+            <![endif]-->
+        {% endblock browser_warning %}
+        <!-- header logo: style can be found in header.less -->
+        <header class="header">
+        <a href="{% url 'index' %}" class="logo">
+                <!-- Add the class icon to your logo image or logo icon to add the margining -->
+                TechPong.co
+            </a>
+            <!-- Header Navbar: style can be found in header.less -->
+            <nav class="navbar navbar-static-top" role="navigation">
+                <!-- Sidebar toggle button-->
+                <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <div class="navbar-right">
+                    <ul class="nav navbar-nav">
+
+                        {% if company %}
+                        <!-- User Account: style can be found in dropdown.less -->
+                        <li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="glyphicon glyphicon-user"></i>
+                                <span>{{company.name}} <i class="caret"></i></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- User image -->
+                                <li class="user-header bg-light-blue">
+                                    {% if company.logo_url %}
+                                    <img src="{{company.logo_url}}" class="img-circle" alt="Company Image" />
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Add your site or application content here -->
+		{% block content %}
+		{% endblock content %}
+
+    {% block after_content_js %}
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+
+        {% compressed_js 'base' %}
+
+        {% block additional_js %}
+        {% endblock additional_js %}
+    {% endblock after_content_js %}
+
+		{% block google_analytics %}
+        {% if not debug %}
+        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+        <script>
+            var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+            g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+            s.parentNode.insertBefore(g,s)}(document,'script'));
+        </script>
+        {% else %}
+            <!-- google analytics disabled for debug -->
+        {% endif %}
+		{% endblock google_analytics %}
+    </body>
+</html>
