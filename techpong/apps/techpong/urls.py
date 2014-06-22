@@ -1,5 +1,5 @@
 from coffin.conf.urls import *
-from django.contrib.auth.views import login
+from django.contrib.auth.views import login, logout
 
 urlpatterns = patterns('apps.techpong',
 
@@ -11,6 +11,7 @@ urlpatterns = patterns('apps.techpong',
 
     url(r'^login/$', login, name='login'),
     url(r'^accounts/login/$', login, name='login'),
+    url(r'^accounts/logout/$', logout, name='logout'),
 
     # ajax calls
     url(r'^pingpong/(?P<company_name>\w+)/ajax/add_match/$', 'ajax_views.add_match', name='ajax_add_match'),
