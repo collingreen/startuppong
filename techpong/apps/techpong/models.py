@@ -11,9 +11,9 @@ from lib.djeroku.tools.misc_tools import get_timestamp
 import json
 import elo
 
-MATCH_RESULT_LIMIT = 10
-CACHED_RATING_LIMIT = 25
-CACHED_RANK_LIMIT = 25
+MATCH_RESULT_LIMIT = 50
+CACHED_RATING_LIMIT = 50
+CACHED_RANK_LIMIT = 50
 
 DEFAULT_RATING = 500.0
 
