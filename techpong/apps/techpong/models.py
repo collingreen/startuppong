@@ -153,8 +153,8 @@ class Company(models.Model):
                 cached_rank_changes = ''
             )
 
-        # get all the matches and replay them
-        matches = self.match_set.all()
+        # get all the matches and replay them in order
+        matches = self.match_set.order_by('played_time')
         for match in matches:
             match.update_company_ladder()
 
