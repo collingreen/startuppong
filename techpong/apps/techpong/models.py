@@ -145,13 +145,24 @@ class Company(models.Model):
     def recache_matches(self):
         """Resets all players and replays every match."""
         # reset all the players
-        self.player_set.update(
-                rating = DEFAULT_RATING,
-                rank = None,
-                cached_results = '',
-                cached_rating_changes = '',
-                cached_rank_changes = ''
-            )
+##        self.player_set.update(
+##                rating = DEFAULT_RATING,
+##                rank = None,
+##                cached_results = '',
+##                cached_rating_changes = '',
+##                cached_rank_changes = ''
+##            )
+
+        # give all the players a starting rank
+        i = 1
+        for player in self.player_set.order_by('id'):
+            player.rank = i
+            player.rating = DEFAULT_RATING
+            player.cached_results = ''
+            player.cached_rating_changes = ''
+            player.cached_rank_changes = ''
+            player.save()
+            i += 1
 
         # get all the matches and replay them in order
         matches = self.match_set.order_by('played_time')
