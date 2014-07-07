@@ -202,7 +202,7 @@
               //$("#addMatchModal").modal("hide");
             }
             else {
-              var error_message = "There was an error while creating the match. Go yell at whoever set this up.";
+              var error_message = "There was an error while creating the match. Go yell at whomever set this up.";
               if (response.error_message) {
                 error_message = response.error_message;
               }
@@ -211,7 +211,7 @@
             }
           },
           failure: function(response) {
-            showError("Error creating match. Go yell at whoever set this up.");
+            showError("Error creating match. Go yell at whomever set this up.");
             $("#addMatchModal").modal("hide");
           }
         });
@@ -242,7 +242,7 @@
               //$("#addPlayerModal").modal("hide");
             }
             else {
-              var error_message = "There was an error while adding the new player. Go yell at whoever set this up.";
+              var error_message = "There was an error while adding the new player. Go yell at whomever set this up.";
               if (response.error_message) {
                 error_message = response.error_message;
               }
@@ -251,7 +251,7 @@
             }
           },
           failure: function(response) {
-            showError("Error creating new player. Go yell at whoever set this up.");
+            showError("Error creating new player. Go yell at whomever set this up.");
             $("#addPlayerModal").modal("hide");
           }
 
