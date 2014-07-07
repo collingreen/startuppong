@@ -187,6 +187,7 @@
         }
 
         // send to server
+        $("#addMatchModalSave").attr("disabled", true);
         $.ajax("{% url 'ajax_add_match' company_name=company.short_name %}", {
           method: "POST",
           headers: {"X-CSRFToken": "{{ csrf_token|safe() }}"},
@@ -202,6 +203,7 @@
               //$("#addMatchModal").modal("hide");
             }
             else {
+              $("#addMatchModalSave").attr("disabled", false);
               var error_message = "There was an error while creating the match. Go yell at whomever set this up.";
               if (response.error_message) {
                 error_message = response.error_message;
