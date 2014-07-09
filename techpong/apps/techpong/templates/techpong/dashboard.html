@@ -314,6 +314,12 @@
             }
           },
           failure: function(response) {
+            $("#addMatchModalSave").attr("disabled", false);
+            showError("Error creating match. Go yell at whomever set this up.");
+            $("#addMatchModal").modal("hide");
+          },
+          error: function(response) {
+            $("#addMatchModalSave").attr("disabled", false);
             showError("Error creating match. Go yell at whomever set this up.");
             $("#addMatchModal").modal("hide");
           }
@@ -331,6 +337,7 @@
         }
 
         // send to server
+        $("#addPlayerName").attr("disabled", true);
         $.ajax("{% url 'ajax_add_player' company_name=company.short_name %}", {
           method: "POST",
           headers: {"X-CSRFToken": "{{ csrf_token|safe() }}"},
@@ -345,6 +352,7 @@
               //$("#addPlayerModal").modal("hide");
             }
             else {
+              $("#addPlayerName").attr("disabled", false);
               var error_message = "There was an error while adding the new player. Go yell at whomever set this up.";
               if (response.error_message) {
                 error_message = response.error_message;
@@ -354,6 +362,10 @@
             }
           },
           failure: function(response) {
+            showError("Error creating new player. Go yell at whomever set this up.");
+            $("#addPlayerModal").modal("hide");
+          },
+          error: function(response) {
             showError("Error creating new player. Go yell at whomever set this up.");
             $("#addPlayerModal").modal("hide");
           }
