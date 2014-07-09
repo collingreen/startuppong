@@ -116,25 +116,69 @@
       </div>
       <div class="modal-body">
 
-      <div class="row">
-        <div class="col-xs-2">
-          Winner:
-        </div>
-        <div class="col-xs-10">
-          <select id='addMatchWinner' class='player_select'>
-            <option value=''>-----</option>
-          </select>
-        </div>
-        <div class="col-xs-2">
-          Loser:
-        </div>
-        <div class="col-xs-10">
-          <select id='addMatchLoser' class='player_select'>
-            <option value=''>-----</option>
-          </select>
-        </div>
-      </div>
+        <form role="form">
+          <div class="form-group">
+            <div class="row">
+              <div class="col-xs-2">
+                <label for="addMatchWinner">Winner:</label>
+              </div>
+              <div class="col-xs-10">
+                <select id='addMatchWinner' class='player_select'>
+                  <option value=''>-----</option>
+                </select>
+              </div>
+              <div class="col-xs-2">
+                <label for="addMatchLoser">Loser:</label>
+              </div>
+              <div class="col-xs-10">
+                <select id='addMatchLoser' class='player_select'>
+                  <option value=''>-----</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-4">
+                <label class="game-label">Game 1:</label>
+              </div>
+              <div class="col-xs-4">
+                <label class="game-label">Game 2:</label>
+              </div>
+              <div class="col-xs-4">
+                <label class="game-label">Game 3:</label>
+              </div>
+            </div>
+            <div class="row score_row">
+              <div class="col-xs-2">
+                <label for="game1Winner">Winner:</label>
+                <select id="game1Winner" class="score-select input-small"></select>
+              </div>
+              <div class="col-xs-2">
+                <label for="game1Loser">Loser:</label>
+                <select id="game1Loser" class="score-select input-small"></select>
+              </div>
 
+              <div class="col-xs-2">
+                <label for="game2Winner">Winner:</label>
+                <select id="game2Winner" class="score-select input-small"></select>
+              </div>
+              <div class="col-xs-2">
+                <label for="game2Loser">Loser:</label>
+                <select id="game2Loser" class="score-select input-small"></select>
+              </div>
+
+              <div class="col-xs-2">
+                <label for="game3Winner">Winner:</label>
+                <select id="game3Winner" class="score-select input-small"></select>
+              </div>
+              <div class="col-xs-2">
+                <label for="game3Loser">Loser:</label>
+                <select id="game3Loser" class="score-select input-small"></select>
+              </div>
+
+            </div>
+          </div>
+        </form>
+        <div id="addMatchAlertContainer"></div>
       </div>
        <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -150,14 +194,16 @@
         <h4 class="modal-title" id="addMatchModalLabel">Add New Player</h4>
       </div>
       <div class="modal-body">
-
-      <div class="row">
-        <div class="col-md-6">
-          Name:
-          <input id="addPlayerName"/>
-        </div>
-      </div>
-
+        <form role="form">
+          <div class="form-group">
+            <div class="row">
+              <div class="col-md-6">
+                <label for="addPlayerName">Name:</label>
+                <input id="addPlayerName"/>
+              </div>
+            </div>
+          </div>
+        </form>
       </div>
        <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -173,17 +219,69 @@
   $(document).on('ready', function(){
       $('.player_sparkline_results').sparkline('html', {type: 'tristate'});
       $('.player_sparkline_ratings').sparkline();
-      $('.player_sparkline_rank').sparkline();
+      $('.player_sparkline_rank').sparkline('html', {
+//        tooltipFormatter: function() {
+
+ //       }
+      });
 
       $('#addMatchModalSave').on('click', function(){
         var winner = $('#addMatchWinner').val();
         var loser = $('#addMatchLoser').val();
 
+        var game1winner = $('#game1Winner').val();
+        var game1loser = $('#game1Loser').val();
+
+        var game2winner = $('#game2Winner').val();
+        var game2loser = $('#game2Loser').val();
+
+        var game3winner = $('#game3Winner').val();
+        var game3loser = $('#game3Loser').val();
+
+        // target for in-modal alerts
+        var alert_target = $("#addMatchAlertContainer");
+
         // validate selected players
         if (winner <= 0 || loser <= 0 || !winner || !loser || winner == loser) {
-          showError("Stop trying to break the system");
+          showError("Stop trying to break the system", alert_target);
           $("#addMatchModal").modal("hide");
           return;
+        }
+
+        // validate scores
+        if (!(game1winner == 0 && game1loser == 0
+            && game2winner == 0 && game2loser == 0
+            && game3winner == 0 && game3loser == 0)) {
+
+          if (
+              (game1winner == 11 && game1loser == 11)
+              || (game2winner == 11 && game2loser == 11)
+              || (game3winner == 11 && game3loser == 11) ) {
+              showError("Game Scores Appear Invalid", alert_target);
+              return;
+          }
+
+          if ((game1winner != 11 && game1loser != 11)
+              || (game2winner != 11 && game2loser != 11)) {
+              showError("Game Scores Appear Invalid - Not Enough Games Won", alert_target);
+              return;
+          }
+
+          // validate winner won exactly two games
+          var g1 = game1winner == 11;
+          var g2 = game2winner == 11;
+          var g3 = game3winner == 11;
+
+          if ( ! ((g1&&g2&&!g3) || (g1&&!g2&&g3) || (!g1&&g2&&g3)) ) {
+              showError("Game Scores Appear Invalid - Invalid Winner", alert_target);
+              return;
+          }
+
+          // verify no third game was played if winner won first 2 games
+          if (g1 && g2 && (game3winner != 0 || game3loser != 0)) {
+            showError("Game Scores Appear Invalid - Invalid Third Game", alert_target);
+            return;
+          }
         }
 
         // send to server
@@ -193,7 +291,10 @@
           headers: {"X-CSRFToken": "{{ csrf_token|safe() }}"},
           data: {
             winner: winner,
-            loser: loser
+            loser: loser,
+            game1winner: game1winner, game1loser: game1loser,
+            game2winner: game2winner, game2loser: game2loser,
+            game3winner: game3winner, game3loser: game3loser
           },
           success: function(response) {
             if (response.success) {
@@ -264,21 +365,27 @@
       // populate player selectors
       var players = {{info.players_json|safe()}};
       var option;
-      for( var i = 0; i < players.length; i++) {
-        option = $("<option/>").val(players[i].id).text(players[i].name);
+      for (var i = 0; i < players.length; i++) {
+        var option = $("<option/>").val(players[i].id).text(players[i].name);
         $(".player_select").append(option);
+      }
+
+      // populate score selectors
+      for (var i=0; i <= 11; i++) {
+        var option = $("<option/>").val(i).text(i);
+        $(".score-select").append(option);
       }
   });
 
-  function showError(message) {
-    showAlert(message, 'alert-danger');
+  function showError(message, target) {
+    showAlert(message, 'alert-danger', target);
   }
 
   function showSuccess(message) {
     showAlert(message, 'alert-success');
   }
 
-  function showAlert(message, alert_class) {
+  function showAlert(message, alert_class, target) {
     var alert_div = $('<div/>').addClass('alert '+alert_class).text(message);
     alert_div.append(
       $('<button/>')
@@ -289,7 +396,7 @@
         })
         .html("&times;")
     );
-    alert_div.appendTo($('#alert_container'));
+    alert_div.appendTo(target || $('#alert_container'));
     alert_div.alert();
 
     setTimeout(function(){ alert_div.alert('close'); }, 3500);

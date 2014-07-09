@@ -16,3 +16,6 @@
 .box .box-header .box-title-full { width: 100%; }
 
 .text-success { color: #117733; }
+
+.score-select { width: 60px; }
+.game-label { font-weight: bold; margin-top: 20px; }

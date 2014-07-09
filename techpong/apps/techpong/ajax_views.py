@@ -45,12 +45,59 @@ def add_match(request, company_name):
         # todo: show permission denied
         raise Http404()
 
+    # look for points
+    scores = {}
+    for i in [1,2,3]:
+        field = "game%dwinner" % i
+        scores[field] = 0
+        if field in request.POST:
+            num = request.POST[field]
+            try:
+                num = int(num)
+            except ValueError, TypeError:
+                continue
+            if num < 0 or num > 11:
+                continue
+        scores[field] = num
+
+        field = "game%dloser" % i
+        scores[field] = 0
+        if field in request.POST:
+            num = request.POST[field]
+            try:
+                num = int(num)
+            except ValueError, TypeError:
+                continue
+            if num < 0 or num > 11:
+                continue
+        scores[field] = num
+    # todo: validate scores on model
+
     # create a new match
     match = company.match_set.create(
-                winner = winner,
-                loser = loser,
-                played_time = datetime.datetime.now()
-            )
+        winner = winner,
+        loser = loser,
+        played_time = datetime.datetime.now()
+    )
+
+    match.round_set.create(
+        round_number = 1,
+        winner_score = scores["game1winner"],
+        loser_score = scores["game1loser"]
+    )
+
+    match.round_set.create(
+        round_number = 2,
+        winner_score = scores["game2winner"],
+        loser_score = scores["game2loser"]
+    )
+
+    if scores["game3winner"] > 0 and scores["game3loser"] > 0:
+        match.round_set.create(
+            round_number = 3,
+            winner_score = scores["game3winner"],
+            loser_score = scores["game3loser"]
+        )
 
     # return success
     return json_response(True, match_id=match.id)

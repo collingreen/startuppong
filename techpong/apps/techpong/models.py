@@ -410,5 +410,10 @@ class Round(models.Model):
     match = models.ForeignKey(Match)
     round_number = models.PositiveSmallIntegerField()
 
-    player1_score = models.IntegerField()
-    player2_score = models.IntegerField()
+    winner_score = models.IntegerField(default=0)
+    loser_score = models.IntegerField(default=0)
+
+    def __unicode__(self):
+        return "Match %d Round %d: Winner %d - Loser %d" % (
+                self.match.id, self.round_number,
+                self.winner_score, self.loser_score)
