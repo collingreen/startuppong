@@ -210,7 +210,7 @@ class Player(models.Model):
             'played_time': str(match.played_time),
             'played_timestamp': get_timestamp(match.played_time)
         })
-        self.cached_results = json.dumps(results[:CACHED_RATING_LIMIT])
+        self.cached_results = json.dumps(results[-CACHED_RATING_LIMIT:])
 
         # update player with new rating
         self.update_rating(new_rating, match)
@@ -234,7 +234,7 @@ class Player(models.Model):
             "played_timestamp": get_timestamp(match.played_time)
         })
         self.cached_rating_changes = json.dumps(
-                                        rating_changes[:CACHED_RATING_LIMIT])
+                rating_changes[-CACHED_RATING_LIMIT:])
 
     def recache_matches(self):
         """
@@ -273,7 +273,7 @@ class Player(models.Model):
             "played_timestamp": get_timestamp(match.played_time)
         })
         self.cached_rank_changes = json.dumps(
-                                        rank_changes[:CACHED_RANK_LIMIT])
+                rank_changes[-CACHED_RANK_LIMIT:])
         self.save()
 
     def get_recent_matches(self):
