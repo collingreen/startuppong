@@ -45,34 +45,6 @@ def add_match(request, company_name):
         # todo: show permission denied
         raise Http404()
 
-    # look for points
-    scores = {}
-    for i in [1,2,3]:
-        field = "game%dwinner" % i
-        scores[field] = 0
-        if field in request.POST:
-            num = request.POST[field]
-            try:
-                num = int(num)
-            except ValueError, TypeError:
-                continue
-            if num < 0 or num > 11:
-                continue
-        scores[field] = num
-
-        field = "game%dloser" % i
-        scores[field] = 0
-        if field in request.POST:
-            num = request.POST[field]
-            try:
-                num = int(num)
-            except ValueError, TypeError:
-                continue
-            if num < 0 or num > 11:
-                continue
-        scores[field] = num
-    # todo: validate scores on model
-
     # create a new match
     match = company.match_set.create(
         winner = winner,
@@ -80,24 +52,40 @@ def add_match(request, company_name):
         played_time = datetime.datetime.now()
     )
 
-    match.round_set.create(
-        round_number = 1,
-        winner_score = scores["game1winner"],
-        loser_score = scores["game1loser"]
-    )
+    # save round info if available
+    # todo: validate on model
+    round_winners = {}
+    winning_rounds = 0
+    for i in [1,2,3]:
+        field = "game%dwinner" % i
+        if field in request.POST:
+            round_winner_id = request.POST[field]
+            try:
+                round_winner_id = int(round_winner_id)
+            except ValueError, TypeError:
+                continue
 
-    match.round_set.create(
-        round_number = 2,
-        winner_score = scores["game2winner"],
-        loser_score = scores["game2loser"]
-    )
+            if round_winner_id == winner_id:
+                round_winner = winner
+                round_loser = loser
+                winning_rounds += 1
+            else:
+                round_winner = loser
+                round_loser = winner
 
-    if scores["game3winner"] > 0 and scores["game3loser"] > 0:
-        match.round_set.create(
-            round_number = 3,
-            winner_score = scores["game3winner"],
-            loser_score = scores["game3loser"]
-        )
+        round_winners[i] = dict(
+                winner = round_winner,
+                loser = round_loser
+            )
+
+    # if proper number of rounds won by match winner, create round objects
+    if winning_rounds == 2:
+        for i in [1,2,3]:
+            match.round_set.create(
+                round_number = i,
+                winner = round_winners[i]['winner'],
+                loser = round_winners[i]['loser']
+            )
 
     # return success
     return json_response(True, match_id=match.id)

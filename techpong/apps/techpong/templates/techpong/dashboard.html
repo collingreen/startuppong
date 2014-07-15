@@ -119,62 +119,50 @@
         <form role="form">
           <div class="form-group">
             <div class="row">
-              <div class="col-xs-2">
+              <div class="col-md-6"></div>
+              <div class="col-md-2">Game 1</div>
+              <div class="col-md-2">Game 2</div>
+              <div class="col-md-2">Game 3</div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-2">
                 <label for="addMatchWinner">Winner:</label>
               </div>
-              <div class="col-xs-10">
-                <select id='addMatchWinner' class='player_select'>
+              <div class="col-md-4">
+                <select id='addMatchWinner' class='player_select input-medium'>
                   <option value=''>-----</option>
                 </select>
               </div>
-              <div class="col-xs-2">
+              <div class="col-md-2">
+                <input id="game1winner_winner" type="radio" name="game1winner"/>
+              </div>
+              <div class="col-md-2">
+                <input id="game2winner_winner" type="radio" name="game2winner"/>
+              </div>
+              <div class="col-md-2">
+                <input id="game3winner_winner" type="radio" name="game3winner"/>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-2">
                 <label for="addMatchLoser">Loser:</label>
               </div>
-              <div class="col-xs-10">
-                <select id='addMatchLoser' class='player_select'>
+              <div class="col-md-4">
+                <select id='addMatchLoser' class='player_select input-medium'>
                   <option value=''>-----</option>
                 </select>
               </div>
-            </div>
-            <div class="row">
-              <div class="col-xs-4">
-                <label class="game-label">Game 1:</label>
+              <div class="col-md-2">
+                <input id="game1winner_loser" type="radio" name="game1winner"/>
               </div>
-              <div class="col-xs-4">
-                <label class="game-label">Game 2:</label>
+              <div class="col-md-2">
+                <input id="game2winner_loser" type="radio" name="game2winner"/>
               </div>
-              <div class="col-xs-4">
-                <label class="game-label">Game 3:</label>
+              <div class="col-md-2">
+                <input id="game3winner_loser" type="radio" name="game3winner"/>
               </div>
-            </div>
-            <div class="row score_row">
-              <div class="col-xs-2">
-                <label for="game1Winner">Winner:</label>
-                <select id="game1Winner" class="score-select input-small"></select>
-              </div>
-              <div class="col-xs-2">
-                <label for="game1Loser">Loser:</label>
-                <select id="game1Loser" class="score-select input-small"></select>
-              </div>
-
-              <div class="col-xs-2">
-                <label for="game2Winner">Winner:</label>
-                <select id="game2Winner" class="score-select input-small"></select>
-              </div>
-              <div class="col-xs-2">
-                <label for="game2Loser">Loser:</label>
-                <select id="game2Loser" class="score-select input-small"></select>
-              </div>
-
-              <div class="col-xs-2">
-                <label for="game3Winner">Winner:</label>
-                <select id="game3Winner" class="score-select input-small"></select>
-              </div>
-              <div class="col-xs-2">
-                <label for="game3Loser">Loser:</label>
-                <select id="game3Loser" class="score-select input-small"></select>
-              </div>
-
             </div>
           </div>
         </form>
@@ -229,14 +217,9 @@
         var winner = $('#addMatchWinner').val();
         var loser = $('#addMatchLoser').val();
 
-        var game1winner = $('#game1Winner').val();
-        var game1loser = $('#game1Loser').val();
-
-        var game2winner = $('#game2Winner').val();
-        var game2loser = $('#game2Loser').val();
-
-        var game3winner = $('#game3Winner').val();
-        var game3loser = $('#game3Loser').val();
+        var g1 = $('#game1winner_winner')[0].checked;
+        var g2 = $('#game2winner_winner')[0].checked;
+        var g3 = $('#game3winner_winner')[0].checked;
 
         // target for in-modal alerts
         var alert_target = $("#addMatchAlertContainer");
@@ -248,37 +231,17 @@
           return;
         }
 
-        // validate scores
-        if (!(game1winner == 0 && game1loser == 0
-            && game2winner == 0 && game2loser == 0
-            && game3winner == 0 && game3loser == 0)) {
-
-          if (
-              (game1winner == 11 && game1loser == 11)
-              || (game2winner == 11 && game2loser == 11)
-              || (game3winner == 11 && game3loser == 11) ) {
-              showError("Game Scores Appear Invalid", alert_target);
-              return;
-          }
-
-          if ((game1winner != 11 && game1loser != 11)
-              || (game2winner != 11 && game2loser != 11)) {
-              showError("Game Scores Appear Invalid - Not Enough Games Won", alert_target);
-              return;
-          }
+        // validate wins
+        if (g1 || g2 || g3) {
 
           // validate winner won exactly two games
-          var g1 = game1winner == 11;
-          var g2 = game2winner == 11;
-          var g3 = game3winner == 11;
-
           if ( ! ((g1&&g2&&!g3) || (g1&&!g2&&g3) || (!g1&&g2&&g3)) ) {
               showError("Game Scores Appear Invalid - Invalid Winner", alert_target);
               return;
           }
 
           // verify no third game was played if winner won first 2 games
-          if (g1 && g2 && (game3winner != 0 || game3loser != 0)) {
+          if (g1 && g2 && g3) {
             showError("Game Scores Appear Invalid - Invalid Third Game", alert_target);
             return;
           }
@@ -292,9 +255,9 @@
           data: {
             winner: winner,
             loser: loser,
-            game1winner: game1winner, game1loser: game1loser,
-            game2winner: game2winner, game2loser: game2loser,
-            game3winner: game3winner, game3loser: game3loser
+            game1winner: g1 ? winner : loser,
+            game2winner: g2 ? winner : loser,
+            game3winner: g3 ? winner : loser
           },
           success: function(response) {
             if (response.success) {
@@ -382,11 +345,6 @@
         $(".player_select").append(option);
       }
 
-      // populate score selectors
-      for (var i=0; i <= 11; i++) {
-        var option = $("<option/>").val(i).text(i);
-        $(".score-select").append(option);
-      }
   });
 
   function showError(message, target) {

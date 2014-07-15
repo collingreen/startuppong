@@ -405,15 +405,20 @@ def match_post_save(sender, instance, created, **kwargs):
     if created:
         instance.update_company_ladder()
 
+
 class Round(models.Model):
     """One round in a match."""
     match = models.ForeignKey(Match)
     round_number = models.PositiveSmallIntegerField()
 
-    winner_score = models.IntegerField(default=0)
-    loser_score = models.IntegerField(default=0)
+    winner = models.ForeignKey(
+            Player, null=True, blank=True, related_name="round_winner")
+    loser = models.ForeignKey(
+            Player, null=True, blank=True, related_name="round_loser")
 
     def __unicode__(self):
-        return "Match %d Round %d: Winner %d - Loser %d" % (
-                self.match.id, self.round_number,
-                self.winner_score, self.loser_score)
+        return "Match %d Round %d: Winner %s - Loser %s" % (
+            self.match.id, self.round_number,
+            str(self.winner), str(self.loser)
+        )
+
