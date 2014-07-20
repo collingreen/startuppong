@@ -23,13 +23,25 @@ def dashboard(request, company_name):
     try:
         company = Company.objects.filter(short_name = company_name).get()
     except ObjectDoesNotExist:
-        # todo: show signup form
-        raise Http404()
+        return render(
+            request,
+            'techpong/error.html',
+            dict(
+                error_title="Company Not Found",
+                error_message='Could not find Company "%s"'
+            )
+        )
 
     # check permission
     if not company.check_permission(request.user):
-        # todo: show permission denied
-        raise Http404()
+        return render(
+            request,
+            'techpong/error.html',
+            dict(
+                error_title="Permission Denied",
+                error_message='You do not have permission to access this ladder. You may need to log in to a different account.'
+            )
+        )
 
     # get company info
     company_info = company.get_info()
@@ -41,9 +53,10 @@ def dashboard(request, company_name):
     # render the dashboard
     return render(request, 'techpong/dashboard.html', {
                         "csrf_token": csrf(request)['csrf_token'],
-        				'company': company,
+                        'company': company,
                         'info': company_info
-					})
+                    })
+
 @login_required
 def player(request, company_name, player_id):
 

@@ -15,5 +15,6 @@ urlpatterns = patterns('apps.techpong',
 
     # ajax calls
     url(r'^pingpong/(?P<company_name>\w+)/ajax/add_match/$', 'ajax_views.add_match', name='ajax_add_match'),
-    url(r'^pingpong/(?P<company_name>\w+)/ajax/add_player/$', 'ajax_views.add_player', name='ajax_add_player')
+    url(r'^pingpong/(?P<company_name>\w+)/ajax/add_player/$', 'ajax_views.add_player', name='ajax_add_player'),
+    url(r'^accounts/signup$', 'ajax_views.add_company', name='ajax_signup')
 )

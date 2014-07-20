@@ -1,7 +1,9 @@
 from coffin.shortcuts import render, render_to_response, Http404, HttpResponse, HttpResponseRedirect
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
 
 from lib.djeroku.tools.view_tools import json_response, validate_required
 from apps.techpong.models import *
@@ -128,3 +130,53 @@ def add_player(request, company_name):
 
     # return success
     return json_response(True, player_id = player.id)
+
+
+def add_company(request):
+    required_fields = {
+        'company_name': {
+            'validation': lambda a: len(a.strip()) > 3,
+            'clean': lambda a: a.strip()},
+        'password': {
+            'validation': lambda a: len(a.strip()) > 3,
+            'clean': lambda a: a.strip()},
+        'email': {
+            'validation': lambda a: len(a.strip()) > 3 and a.find('@') > -1,
+            'clean': lambda a: a.strip()
+        }
+    }
+    validate_result = validate_required(request.POST, required_fields)
+    if not validate_result[0]:
+        return json_response(
+                False,
+                error_message="Invalid Field: %s " % str(validate_result[1]))
+    clean = validate_result[1]
+
+    company_name = clean['company_name']
+    password = clean['password']
+    email = clean['email']
+
+    # check if company with the same name already exists
+    if Company.objects.filter(short_name = company_name).exists():
+        return json_response(
+                False, error_message="A company with that name already exists.")
+
+    # create company
+    company = Company.objects.create(short_name=company_name, name=company_name)
+
+    # create user account
+    user = User.objects.create_user(company_name, email, password)
+    user.profile.company = company
+    user.save()
+
+    # log the user account in
+    user = authenticate(username=company_name, password=password)
+    login(request, user)
+
+    # return success
+    return json_response(
+            True,
+            redirect = reverse(
+                "dashboard", kwargs={"company_name": company_name}
+            )
+        )

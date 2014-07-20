@@ -74,11 +74,13 @@
             <nav class="navbar navbar-static-top" role="navigation">
 
             {% if request.user and request.user.is_authenticated %}
-                <a href="{% url 'logout' %}" class="navbar-btn btn">Logout</a>
+              <a href="{% url 'logout' %}" class="navbar-btn btn">Logout {{request.user.username}}</a>
             {% else %}
-                <a href="{% url 'login' %}" class="navbar-btn btn">Login</a>
+              <a href="{% url 'login' %}" class="navbar-btn btn">Login</a>
             {% endif %}
 
+            {% block additional_header %}
+            {% endblock additional_header %}
 
                 <div class="navbar-right">
                     <ul class="nav navbar-nav">
@@ -98,8 +100,8 @@
         </header>
 
         <!-- Add your site or application content here -->
-		{% block content %}
-		{% endblock content %}
+    {% block content %}
+    {% endblock content %}
 
     {% block after_content_js %}
         <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
@@ -111,7 +113,7 @@
         {% endblock additional_js %}
     {% endblock after_content_js %}
 
-		{% block google_analytics %}
+    {% block google_analytics %}
         {% if not debug %}
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <script>
@@ -123,6 +125,6 @@
         {% else %}
             <!-- google analytics disabled for debug -->
         {% endif %}
-		{% endblock google_analytics %}
+    {% endblock google_analytics %}
     </body>
 </html>

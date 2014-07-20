@@ -347,30 +347,5 @@
 
   });
 
-  function showError(message, target) {
-    showAlert(message, 'alert-danger', target);
-  }
-
-  function showSuccess(message) {
-    showAlert(message, 'alert-success');
-  }
-
-  function showAlert(message, alert_class, target) {
-    var alert_div = $('<div/>').addClass('alert '+alert_class).text(message);
-    alert_div.append(
-      $('<button/>')
-        .addClass('close fade in')
-        .attr({
-          'data-dismiss': 'alert',
-          'aria-hidden': 'true'
-        })
-        .html("&times;")
-    );
-    alert_div.appendTo(target || $('#alert_container'));
-    alert_div.alert();
-
-    setTimeout(function(){ alert_div.alert('close'); }, 3500);
-  }
-
 </script>
 {% endblock additional_js %}
