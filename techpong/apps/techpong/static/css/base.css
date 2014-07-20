@@ -3,6 +3,7 @@
 
 .clickable { cursor: pointer; }
 .header-image { min-height: 110px; }
+.header .logo { margin-right: 20px; }
 
 #company_header { position: absolute;  }
 

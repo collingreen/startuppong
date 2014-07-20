@@ -72,7 +72,7 @@ body > .header {
   }
   /*Right side strech mode*/
   .right-side.strech {
-    margin-left: 0;
+    margin-left: 10px;
   }
   .right-side.strech > .content-header {
     margin-top: 0px;
