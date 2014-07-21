@@ -8,7 +8,10 @@ from django.forms.models import modelform_factory
 from apps.techpong.models import *
 from apps.techpong.tools.view_tools import create_sparklines
 import datetime
+import math
 
+# controls how far the ratings graph extends past the min and max
+RATINGS_GRAPH_RANGE_MULTIPLIER = .1
 
 # public pages
 def index(request):
@@ -98,12 +101,33 @@ def player(request, company_name, player_id):
     cached_ranks = json.loads(player.cached_rank_changes or '[]')
     create_sparklines(player)
 
+    # ratings graphs
+    ymin, ymax = None, None
+    for rating_info in cached_ratings:
+        rating = rating_info['rating']
+        if rating < ymin or ymin is None:
+            ymin = rating
+        if rating > ymax or ymax is None:
+            ymax = rating
+
+    if ymin is None:
+        ymin = 0
+    if ymax is None:
+        ymax = 500
+    ratings_spread = ymax - ymin
+    graph_offset = RATINGS_GRAPH_RANGE_MULTIPLIER * ratings_spread
+
+    graph_min = max(0, 10 * round((ymin - graph_offset) / 10))
+    graph_max = 10 * math.ceil((ymax + graph_offset) / 10)
+
     # render the player screen
     return render(request, 'techpong/player.html', {
                         'player': player,
                         'cached_results': cached_results,
                         'cached_ratings': cached_ratings,
-                        'cached_ranks': cached_ranks
+                        'cached_ranks': cached_ranks,
+                        'ymin': graph_min,
+                        'ymax': graph_max
                         })
 
 @login_required
