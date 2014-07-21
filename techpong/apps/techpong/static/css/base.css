@@ -1,5 +1,6 @@
 
-.error { color: red; }
+.error, .errorlist { color: red; }
+.errorlist { list-style-type: none; }
 
 .clickable { cursor: pointer; }
 .header-image { min-height: 110px; }

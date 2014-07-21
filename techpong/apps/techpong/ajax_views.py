@@ -135,21 +135,24 @@ def add_player(request, company_name):
 def add_company(request):
     required_fields = {
         'company_name': {
-            'validation': lambda a: len(a.strip()) > 3,
+            'validation': lambda a: len(a.strip()) >= 3,
             'clean': lambda a: a.strip()},
         'password': {
-            'validation': lambda a: len(a.strip()) > 3,
+            'validation': lambda a: len(a.strip()) >= 3,
             'clean': lambda a: a.strip()},
         'email': {
-            'validation': lambda a: len(a.strip()) > 3 and a.find('@') > -1,
+            'validation': lambda a: len(a.strip()) >= 3 and a.find('@') > -1,
             'clean': lambda a: a.strip()
         }
     }
     validate_result = validate_required(request.POST, required_fields)
     if not validate_result[0]:
+        # get one field out of validation response
+        field_name = validate_result[1].keys()[0]
         return json_response(
                 False,
-                error_message="Invalid Field: %s " % str(validate_result[1]))
+                error_message="Invalid Field: %s" % (field_name.title())
+            )
     clean = validate_result[1]
 
     company_name = clean['company_name']
@@ -177,6 +180,6 @@ def add_company(request):
     return json_response(
             True,
             redirect = reverse(
-                "dashboard", kwargs={"company_name": company_name}
+                "account"
             )
         )

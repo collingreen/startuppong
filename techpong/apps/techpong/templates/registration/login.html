@@ -48,7 +48,7 @@
     {{ form.password.label_tag }} <input name='password' type="password" class="input-block-level" placeholder="Password">
 
     <button class="btn btn-large btn-primary" type="submit">Sign in</button>
-		<input type="hidden" name="next" value="{% if next %}{{ next }}{% endif %}" />
+    <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{% url 'dashboard_redirect' %}{% endif %}" />
 </form>
 
 {% endblock content %}

@@ -74,7 +74,7 @@ class Company(models.Model):
     show_rank = models.BooleanField(default=True)
     show_rating = models.BooleanField(default=True)
     order_by = models.CharField(max_length=50,
-                choices=( ('rank', 'rank'), ('rating', 'rating')),
+                choices=( ('rank', 'Rank'), ('rating', 'Rating')),
                 default='rank'
             )
 

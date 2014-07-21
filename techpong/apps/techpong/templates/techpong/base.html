@@ -66,18 +66,20 @@
         {% endblock browser_warning %}
         <!-- header logo: style can be found in header.less -->
         <header class="header">
-        <a href="{% url 'index' %}" class="logo">
+            <a href="{% url 'index' %}" class="logo">
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->
                 StartupPong.com
             </a>
             <!-- Header Navbar: style can be found in header.less -->
             <nav class="navbar navbar-static-top" role="navigation">
 
-            {% if request.user and request.user.is_authenticated %}
-              <a href="{% url 'logout' %}" class="navbar-btn btn">Logout {{request.user.username}}</a>
-            {% else %}
-              <a href="{% url 'login' %}" class="navbar-btn btn">Login</a>
-            {% endif %}
+            {% block login_button %}
+              {% if request.user and request.user.username and request.user.profile.company %}
+                <a href="{% url 'logout' %}" class="navbar-btn btn">Logout {{request.user.username}}</a>
+              {% else %}
+                <a href="{% url 'login' %}" class="navbar-btn btn">Login</a>
+              {% endif %}
+            {% endblock login_button %}
 
             {% block additional_header %}
             {% endblock additional_header %}
@@ -88,7 +90,7 @@
                         {% if company %}
                         <!-- User Account: style can be found in dropdown.less -->
                         <li class="dropdown user user-menu">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <a href="{% url 'account' %}">
                                 <i class="glyphicon glyphicon-user"></i>
                                 <span>{{company.name}}</span>
                             </a>

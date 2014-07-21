@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.context_processors import csrf
+from django.core.urlresolvers import reverse
+from django.forms.models import modelform_factory
 from apps.techpong.models import *
 from apps.techpong.tools.view_tools import create_sparklines
 import datetime
@@ -16,6 +18,19 @@ def index(request):
         total_matches = Match.objects.count(),
         total_rounds = Round.objects.count()
         ))
+
+@login_required
+def dashboard_redirect(request):
+    if request.user.profile.company:
+        return HttpResponseRedirect(
+                reverse(
+                    "dashboard",
+                    kwargs = {
+                        'company_name': request.user.profile.company.short_name
+                    }
+                )
+            )
+    raise Http404()
 
 @login_required
 def dashboard(request, company_name):
@@ -92,8 +107,41 @@ def player(request, company_name, player_id):
                         })
 
 @login_required
+def account(request):
+    if not request.user.is_active:
+        return render(
+            request,
+            'techpong/error.html',
+            dict(
+                error_title="Account Inactive",
+                error_message="Your account is currently inactive. Please contact an administrator."
+            )
+        )
+    # create form from company model
+    company_form_class = modelform_factory(Company, fields=(
+        'name', 'location',
+        'show_rank', 'show_rating', 'order_by')
+    )
+
+    # handle post
+    if request.method == 'POST':
+        company_form = company_form_class(
+                request.POST, instance=request.user.profile.company)
+        if company_form.is_valid():
+            company_form.save()
+    else:
+        company_form = company_form_class(instance=request.user.profile.company)
+
+    # render account page
+    return render(request, 'techpong/account.html', {
+        'form': company_form,
+        'company': request.user.profile.company,
+        'player': request.user
+    })
+
+@login_required
 @user_passes_test(lambda user: user.is_staff)
-def recache_matches(self):
+def recache_matches(request):
     # replay all matches
     count = 0
     for company in Company.objects.all():
