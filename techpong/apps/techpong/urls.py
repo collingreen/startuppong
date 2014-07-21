@@ -4,6 +4,7 @@ from django.contrib.auth.views import login, logout
 urlpatterns = patterns('apps.techpong',
 
     url(r'^$', 'views.index', name='index'),
+    url(r'^pingpong/dashboard/$', 'views.dashboard_redirect', name='dashboard_redirect'),
     url(r'^pingpong/(?P<company_name>\w+)/$', 'views.dashboard', name='dashboard'),
     url(r'^pingpong/(?P<company_name>\w+)/(?P<player_id>\d+)$', 'views.player', name='player'),
 
@@ -12,8 +13,10 @@ urlpatterns = patterns('apps.techpong',
     url(r'^login/$', login, name='login'),
     url(r'^accounts/login/$', login, name='login'),
     url(r'^accounts/logout/$', logout, name='logout'),
+    url(r'^accounts/edit$', "views.account", name='account'),
 
     # ajax calls
     url(r'^pingpong/(?P<company_name>\w+)/ajax/add_match/$', 'ajax_views.add_match', name='ajax_add_match'),
-    url(r'^pingpong/(?P<company_name>\w+)/ajax/add_player/$', 'ajax_views.add_player', name='ajax_add_player')
+    url(r'^pingpong/(?P<company_name>\w+)/ajax/add_player/$', 'ajax_views.add_player', name='ajax_add_player'),
+    url(r'^accounts/signup$', 'ajax_views.add_company', name='ajax_signup')
 )

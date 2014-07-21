@@ -1,5 +1,6 @@
 
-.error { color: red; }
+.error, .errorlist { color: red; }
+.errorlist { list-style-type: none; }
 
 .clickable { cursor: pointer; }
 .header-image { min-height: 110px; }
@@ -20,3 +21,6 @@
 
 .score-select { width: 60px; }
 .game-label { font-weight: bold; margin-top: 20px; }
+
+.form-horizontal .control-label { float: right; width: auto; }
+.form-horizontal input { margin-top: 5px; }

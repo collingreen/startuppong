@@ -1,0 +1,41 @@
+{% extends 'techpong/base.html' %}
+
+{% block content %}
+<div class="wrapper">
+  <aside class="right-side strech">
+    <section class="content">
+      <form role="form" class="form-horizontal" id="accountForm" method="post" action="">
+        {% csrf_token %}
+        {{form.non_field_errors()|safe}}
+        {% for field in form %}
+        <div class="form-group">
+          <div class="col-lg-3">
+            <label class="control-label" for="{{field.id}}">{{field.label_tag()|safe}}</label>
+          </div>
+          <div class="col-lg-9">
+            {{field.errors|safe}}
+            {{field|safe}}
+          </div>
+        </div>
+        {% endfor %}
+
+        <div class="row">
+          <div class="col-lg-4 col-lg-offset-2 text-center">
+            <a class="btn" id="backToLadder">Return to Ladder</a>
+            <button type="submit" class="btn btn-primary" id="saveAccount">Save</button>
+          </div>
+      </form>
+    </section><!-- /.content -->
+  </aside><!-- /.right-side -->
+</div><!-- ./wrapper -->
+{% endblock content %}
+
+{% block additional_js %}
+<script type="text/javascript">
+  $(window).on('load', function() {
+    $('#backToLadder').on('click', function() {
+      window.location = "{% url 'dashboard' company_name=company.short_name %}";
+    });
+  });
+</script>
+{% endblock additional_js %}
