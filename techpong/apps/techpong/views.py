@@ -46,7 +46,7 @@ def dashboard(request, company_name):
             'techpong/error.html',
             dict(
                 error_title="Company Not Found",
-                error_message='Could not find Company "%s"'
+                error_message='Could not find Company "%s"' % company_name
             )
         )
 
