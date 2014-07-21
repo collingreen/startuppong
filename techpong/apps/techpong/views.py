@@ -1,5 +1,6 @@
 from coffin.shortcuts import render, render_to_response, Http404, HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth import logout as auth_logout
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.context_processors import csrf
@@ -21,6 +22,12 @@ def index(request):
         total_matches = Match.objects.count(),
         total_rounds = Round.objects.count()
         ))
+
+def logout(request):
+    auth_logout(request)
+    return HttpResponseRedirect(
+            reverse('index')
+        )
 
 @login_required
 def dashboard_redirect(request):
