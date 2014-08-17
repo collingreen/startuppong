@@ -68,6 +68,12 @@ def dashboard(request, company_name):
             )
         )
 
+    # check if company is currently recalculating
+    if company.recalculating:
+        return render(request, 'techpong/recalculating.html', {
+            'company': company
+        })
+
     # get company info
     company_info = company.get_info()
 
@@ -102,6 +108,12 @@ def player(request, company_name, player_id):
     except ObjectDoesNotExist:
         raise Http404()
 
+    # check if company is currently recalculating
+    if company.recalculating:
+        return render(request, 'techpong/recalculating.html', {
+            'company': company
+        })
+
     # process cached data
     cached_results = json.loads(player.cached_results or '[]')
     cached_ratings = json.loads(player.cached_rating_changes or '[]')
@@ -130,6 +142,7 @@ def player(request, company_name, player_id):
     # render the player screen
     return render(request, 'techpong/player.html', {
                         'player': player,
+                        'company': company,
                         'cached_results': cached_results,
                         'cached_ratings': cached_ratings,
                         'cached_ranks': cached_ranks,

@@ -70,6 +70,7 @@ class Company(models.Model):
     location = models.CharField(max_length=100)
     banner_url = models.URLField(max_length=255, blank=True)
     logo_url = models.URLField(max_length=255, blank=True)
+    recalculating = models.BooleanField(default=False)
 
     show_rank = models.BooleanField(default=True)
     show_rating = models.BooleanField(default=True)
@@ -144,14 +145,8 @@ class Company(models.Model):
 
     def recache_matches(self):
         """Resets all players and replays every match."""
-        # reset all the players
-##        self.player_set.update(
-##                rating = DEFAULT_RATING,
-##                rank = None,
-##                cached_results = '',
-##                cached_rating_changes = '',
-##                cached_rank_changes = ''
-##            )
+        self.recalculating = True
+        self.save()
 
         # give all the players a starting rank
         i = 1
@@ -168,6 +163,9 @@ class Company(models.Model):
         matches = self.match_set.order_by('played_time')
         for match in matches:
             match.update_company_ladder()
+
+        self.recalculating = False
+        self.save()
 
     def __unicode__(self):
         return self.name

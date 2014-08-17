@@ -95,7 +95,10 @@
 
                 </section><!-- /.content -->
             </aside><!-- /.right-side -->
-        </div><!-- ./wrapper -->
+          </div><!-- ./wrapper -->
+
+
+          {% include 'techpong/partials/delete_match_modal.html' %}
         {% endblock content %}
 
 {% block additional_js %}
@@ -104,6 +107,8 @@
       $('.player_sparkline_results').sparkline('html', {type: 'tristate'});
       $('.player_sparkline_ratings').sparkline();
       $('.player_sparkline_rank').sparkline();
+
+      {% include 'techpong/partials/delete_match_modal.js' %}
 
       {% if player.company.show_rank %}
       // rank graph

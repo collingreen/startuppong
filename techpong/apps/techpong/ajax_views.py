@@ -93,6 +93,46 @@ def add_match(request, company_name):
     return json_response(True, match_id=match.id)
 
 @login_required
+def delete_match(request, company_name):
+    required_fields = {
+        'match_id': {
+            'validation': lambda a: a.isdigit(), 'clean': lambda a: int(a)}
+    }
+    validate_result = validate_required(request.POST, required_fields)
+    if not validate_result[0]:
+        print "POST", request.POST
+        return json_response(
+                False, error_message="Invalid Field: %s " % str(validate_result[1].keys()[0]))
+    clean = validate_result[1]
+    match_id = clean['match_id']
+
+    try:
+        company = Company.objects.filter(short_name = company_name).get()
+    except ObjectDoesNotExist:
+        # todo: show signup form
+        raise Http404()
+
+    # get match
+    try:
+        match = company.match_set.get(pk=match_id)
+    except ObjectDoesNotExist:
+        return json_response(False, error_message="Invalid Match")
+
+    # check permission
+    if not company.check_permission(request.user):
+        # todo: show permission denied
+        raise Http404()
+
+    # delete the match
+    match.delete()
+
+    # recalculate everything to fix the user caches
+    company.recache_matches()
+
+    # return success
+    return json_response(True)
+
+@login_required
 def add_player(request, company_name):
     required_fields = {
         'name': {

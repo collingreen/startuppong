@@ -1,29 +1,33 @@
 
 <div class="match_row">
-  <a href="{% url 'player' company_name=match.winner.company.short_name,player_id=match.winner.id %}"
-    class="match_winner text-success" data-tooltip
-      title="{{match.winner.name}} gained {{match.winner_rating_after - match.winner_rating_before}} rating for winning this match."
-      >
-      {% if company.show_rank and match.winner_rank_before %}
-      ({{match.winner_rank_before}})
-      {% elif company.show_rating and not company.show_rank and match.winner_rating_before %}
-      ({{match.winner_rating_before}})
-      {% endif %}
-      {{match.winner.name}}</a>
-    vs
-    <a href="{% url 'player' company_name=match.loser.company.short_name,player_id=match.loser.id %}"
-      class="match_loser text-danger" data-tooltip
-      title="
-      {{match.loser.name}}
-      {% if match.loser_rating_after < match.loser_rating_before %}lost {{match.loser_rating_before - match.loser_rating_after}} rating for losing this match.
-      {% else %}gained {{match.loser_rating_after - match.loser_rating_before}} rating for playing this match.
-      {% endif %}">
-      {% if company.show_rank and match.loser_rank_before %}
-      ({{match.loser_rank_before}})
-      {% elif company.show_rating and not company.show_rank and match.loser_rating_before %}
-      ({{match.winner_rating_before}})
-      {% endif %}
-      {{match.loser.name}}</a>
-    <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> {{match.played_time|date('M d g:i A')|title()}}</small>
-    <!--<div class='match_details'>21-19, 18-21, 21-14</div>-->
+  <div class="text-danger delete_match pull-left" data-tooltip title="Delete this Match" data-match-id="{{match.id}}">X</div>
+  <div class="row_summary">
+    <a href="{% url 'player' company_name=match.winner.company.short_name,player_id=match.winner.id %}"
+      class="match_winner text-success" data-tooltip
+        title="{{match.winner.name}} gained {{match.winner_rating_after - match.winner_rating_before}} rating for winning this match."
+        >
+        {% if company.show_rank and match.winner_rank_before %}
+        ({{match.winner_rank_before}})
+        {% elif company.show_rating and not company.show_rank and match.winner_rating_before %}
+        ({{match.winner_rating_before}})
+        {% endif %}
+        {{match.winner.name}}</a>
+      vs
+      <a href="{% url 'player' company_name=match.loser.company.short_name,player_id=match.loser.id %}"
+        class="match_loser text-danger" data-tooltip
+        title="
+        {{match.loser.name}}
+        {% if match.loser_rating_after < match.loser_rating_before %}lost {{match.loser_rating_before - match.loser_rating_after}} rating for losing this match.
+        {% else %}gained {{match.loser_rating_after - match.loser_rating_before}} rating for playing this match.
+        {% endif %}">
+        {% if company.show_rank and match.loser_rank_before %}
+        ({{match.loser_rank_before}})
+        {% elif company.show_rating and not company.show_rank and match.loser_rating_before %}
+        ({{match.winner_rating_before}})
+        {% endif %}
+        {{match.loser.name}}</a>
+      <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> {{match.played_time|date('M d g:i A')|title()}}
+      </small>
+      <!--<div class='match_details'>21-19, 18-21, 21-14</div>-->
+  </div>
 </div>

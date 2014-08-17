@@ -47,7 +47,7 @@ function showSuccess(message) {
     showAlert(message, 'alert-success');
 }
 
-function showAlert(message, alert_class, target) {
+function showAlert(message, alert_class, target, timeout) {
     var alert_div = $('<div/>').addClass('alert '+alert_class).text(message);
     alert_div.append(
       $('<button/>')
@@ -61,6 +61,10 @@ function showAlert(message, alert_class, target) {
     alert_div.appendTo(target || $('#alert_container'));
     alert_div.alert();
 
-    setTimeout(function(){ alert_div.alert('close'); }, 3500);
+    if (timeout !== false) {
+      setTimeout(function(){ alert_div.alert('close'); }, 3500);
+    }
+
+    return alert_div;
 }
 

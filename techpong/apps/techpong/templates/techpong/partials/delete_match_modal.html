@@ -1,0 +1,20 @@
+<div class="modal fade" id="deleteMatchModal" tabindex="-1" role="dialog" aria-labelledby="deleteMatchModal" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="deleteMatchModalLabel">Delete This Match</h4>
+      </div>
+      <div class="modal-body">
+        <h3>Delete this match? This cannot be undone!</h3>
+        <div id='deleteMatchSummary'></div>
+        <p>This will require a recalculation of your ladder, which
+        will take a significant amount of time.</p>
+        <div class='alertContainer'></div>
+        <input type="hidden" id="deleteMatchID"/>
+      </div>
+       <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" id="deleteMatchConfirm">Delete Match</button>
+      </div>
+    </div>
+  </div>

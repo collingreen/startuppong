@@ -13,7 +13,8 @@
 .box-tools .btn { margin: 5px; }
 
 .modal { bottom: inherit; overflow-y: visible; } /* why is this needed? modal continues to bottom otherwise */
-
+.modal .modal-body { margin: 0px; }
+.modal .modal-body h3 { margin: 5px; }
 .box .box-header .box-title { font-weight: bold; }
 .box .box-header .box-title-full { width: 100%; }
 
@@ -24,3 +25,13 @@
 
 .form-horizontal .control-label { float: right; width: auto; }
 .form-horizontal input { margin-top: 5px; }
+
+.delete_match {
+    margin: 0 5px;
+    font-weight: bold;
+    content: "X";
+    cursor: pointer;
+}
+
+#deleteMatchModal .alertContainer { margin: 5px 20px 5px 5px; }
+#deleteMatchModal .alertContainer .alert { margin: 5px; }

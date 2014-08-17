@@ -12,15 +12,11 @@
                 <div id="alert_container"></div>
 
                 <section class="content">
-                    <div class="row">
-                      <div class="col-lg-10">
-                      </div>
-                    </div>
 
                     <!-- Main row -->
                     <div class="row">
                         <!-- Left col -->
-                        <section class="col-lg-8 col-md-12 connectedSortable">
+                        <section class="col-md-12 connectedSortable">
 
                             <!-- Map box -->
                             <div class="box box-primary">
@@ -76,7 +72,7 @@
                         </section><!-- /.Left col -->
 
                         <!-- right col -->
-                        <section class="col-lg-4 col-md-12 connectedSortable">
+                        <section class="col-md-12 connectedSortable">
                             <!-- Chat box -->
                             <div class="box box-success">
                                 <div class="box-header">
@@ -198,8 +194,11 @@
         <button type="button" class="btn btn-primary" id="addPlayerSave">Add Player</button>
       </div>
     </div>
-</div>
-        {% endblock content %}
+  </div>
+
+  {% include 'techpong/partials/delete_match_modal.html' %}
+
+{% endblock content %}
 
 {% block additional_js %}
 <script type='text/javascript'>
@@ -212,6 +211,8 @@
 
  //       }
       });
+
+      {% include 'techpong/partials/delete_match_modal.js' %}
 
       $('#addMatchModalSave').on('click', function(){
         var winner = $('#addMatchWinner').val();
