@@ -71,6 +71,7 @@ class Company(models.Model):
     banner_url = models.URLField(max_length=255, blank=True)
     logo_url = models.URLField(max_length=255, blank=True)
     recalculating = models.BooleanField(default=False)
+    latest_change = models.DateTimeField(auto_now=True)
 
     show_rank = models.BooleanField(default=True)
     show_rating = models.BooleanField(default=True)

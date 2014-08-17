@@ -9,6 +9,7 @@ from lib.djeroku.tools.view_tools import json_response, validate_required
 from apps.techpong.models import *
 
 import datetime
+import time
 
 @login_required
 def add_match(request, company_name):
@@ -89,6 +90,9 @@ def add_match(request, company_name):
                 loser = round_winners[i]['loser']
             )
 
+    # save company to update the last changed time
+    company.save()
+
     # return success
     return json_response(True, match_id=match.id)
 
@@ -100,7 +104,6 @@ def delete_match(request, company_name):
     }
     validate_result = validate_required(request.POST, required_fields)
     if not validate_result[0]:
-        print "POST", request.POST
         return json_response(
                 False, error_message="Invalid Field: %s " % str(validate_result[1].keys()[0]))
     clean = validate_result[1]
@@ -168,9 +171,11 @@ def add_player(request, company_name):
                 rating = 500, # todo: company can specify the starting rating
             )
 
+    # save company to update the last changed time
+    company.save()
+
     # return success
     return json_response(True, player_id = player.id)
-
 
 def add_company(request):
     required_fields = {
@@ -223,3 +228,23 @@ def add_company(request):
                 "account"
             )
         )
+
+@login_required
+def check_for_update(request, company_name):
+    try:
+        company = Company.objects.filter(short_name = company_name).get()
+    except ObjectDoesNotExist:
+        # todo: show signup form
+        raise Http404()
+
+    # check permission
+    if not company.check_permission(request.user):
+        return json_response(False, {
+            "error_message": "Permission Denied"
+        })
+
+    # return the company's latest_change
+    timestamp = time.mktime(company.latest_change.timetuple())
+    return json_response(True,
+        latest_change = timestamp
+    );

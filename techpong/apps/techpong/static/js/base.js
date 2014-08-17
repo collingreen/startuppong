@@ -68,3 +68,37 @@ function showAlert(message, alert_class, target, timeout) {
     return alert_div;
 }
 
+function pollForUpdates(pollForUpdatesDelay, company_latest_change, check_for_updates_url) {
+    // clear the current timeout
+    if (window.idle_timeout) {
+      clearInterval(window.idle_timeout);
+    };
+
+    // create new timeout
+    window.idle_timeout = setInterval(
+      function(){
+        reloadIfUpdated(check_for_updates_url, company_latest_change)
+      }, pollForUpdatesDelay
+    );
+};
+
+function reloadIfUpdated(check_for_updates_url, company_latest_change) {
+  checkForCompanyUpdate(check_for_updates_url, function(latest_change) {
+    if (latest_change !== company_latest_change) {
+      window.location.reload();
+    }
+  });
+};
+
+function checkForCompanyUpdate(check_for_updates_url, cb) {
+  // query for latest change
+  $.ajax(check_for_updates_url, {
+    method: "POST",
+    headers: {"X-CSRFToken": window.csrf_token},
+    success: function(response) {
+      if (response.latest_change) {
+        cb && cb(response.latest_change);
+      }
+    }
+  });
+}

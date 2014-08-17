@@ -7,6 +7,7 @@ Replace this with more appropriate tests for your application.
 
 from django.test import TestCase
 from apps.techpong.models import *
+import datetime
 
 class SimpleTest(TestCase):
     def test_basic_addition(self):
@@ -77,7 +78,13 @@ class RankTest(TestCase):
 
         # let last pass first
         last = players[len(players)-1]
-        self.company.update_player_rank(last, 1)
+        match = Match(
+                company=self.company,
+                played_time=datetime.datetime.now(),
+                winner=last,
+                loser=players[0]
+                )
+        self.company.update_player_rank(last, 1, match)
 
         # get players again
         players = Player.objects.all()
@@ -111,7 +118,14 @@ class RankTest(TestCase):
         # let second place pass first
         first = players[0]
         second = players[1]
-        self.company.update_player_rank(second, 1)
+        match = Match(
+                company=self.company,
+                played_time=datetime.datetime.now(),
+                winner=second,
+                loser=first
+                )
+        match.save()
+        self.company.update_player_rank(second, 1, match)
 
         # get players again
         players = Player.objects.all()
