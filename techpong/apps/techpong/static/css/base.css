@@ -26,6 +26,9 @@
 .form-horizontal .control-label { float: right; width: auto; }
 .form-horizontal input { margin-top: 5px; }
 
+#addMatchModal form label { text-align: right; }
+#addMatchModal form .row { margin-bottom: 10px; }
+
 .delete_match {
     margin: 0 5px;
     font-weight: bold;
