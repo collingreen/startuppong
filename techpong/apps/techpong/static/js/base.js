@@ -1,6 +1,9 @@
 (function(){
 
     $(window).load(function() {
+
+      $('[data-tooltip]').tooltip();
+
       $("input.atLeast3").each(function(i, el) {
           el = $(el);
 
