@@ -202,6 +202,8 @@
 
 {% block additional_js %}
 <script type='text/javascript'>
+  // ugly csrf code - would be better setting jquery ajax base
+  window.csrf_token = "{{ csrf_token|safe() }}";
 
   $(document).on('ready', function(){
 
