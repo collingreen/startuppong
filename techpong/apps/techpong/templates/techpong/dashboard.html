@@ -38,7 +38,7 @@
                                         <!-- .table - Uses sparkline charts-->
                                         <table class="table table-striped ladder">
                                             <tr>
-                                                <th></th>
+                                              <th><i class='fa fa-info-circle text-small' data-tooltip title="Click the player ranks to quickly add matches"></i></th>
                                                 <th>Player</th>
                                                 <th>Recent Games</th>
                                                 {% if company.show_rank %}
@@ -50,7 +50,7 @@
                                             </tr>
                                             {% for player in info.players %}
                                             <tr class='player' data-player-id='{{player.id}}'>
-                                              <td><div class='player_ranking'>{{player.rank or ''}}</div></td>
+                                              <td class='quick-select'><div class='player_ranking'>{{player.rank or ''}}</div></td>
                                               <td><div class='player_name'><a href="{% url 'player' company_name=company.short_name,player_id=player.id %}">{{player.name}} {% if company.show_rating %}({{'%.02f'|format(player.rating)}}){% endif %}</a></div></td>
                                               <td><div class='player_sparkline_results' values="{{player.results_sparkline}}"></div></td>
                                               {% if company.show_rank %}
@@ -216,6 +216,8 @@
           return;
         }
 
+          // clear quick select
+          resetQuickSelect();
 
         // send to server
         $("#addMatchModalSave").attr("disabled", true);
@@ -311,6 +313,73 @@
         var option = $("<option/>").val(players[i].id).text(players[i].name);
         $(".player_select").append(option);
       }
+
+      // add quick-select behavior
+      var quick_select_winner = void 0;
+      var quick_select_loser = void 0;
+      qs_winner = $('<div/>')
+          .addClass('quick-select-marker quick-select-winner')
+          .text('W');
+      qs_loser = $('<div/>')
+          .addClass('quick-select-marker quick-select-loser')
+          .text('L');
+
+      $('.quick-select').on('click', function() {
+          var quick_select = $(this);
+          var player_id = quick_select.parents('tr').attr('data-player-id');
+
+          // if no winner is set
+          if (quick_select_winner === void 0) {
+            if (player_id == quick_select_loser) {
+              quick_select_loser = void 0;
+              qs_loser.remove();
+            }
+            qs_winner.remove().appendTo(quick_select);
+            quick_select_winner = player_id;
+          }
+          // winner is set, no loser is set
+          else if (quick_select_loser === void 0) {
+            if (player_id === quick_select_winner) {
+              quick_select_winner = void 0;
+              qs_winner.remove();
+            }
+            qs_loser.remove().appendTo(quick_select);
+            quick_select_loser = player_id;
+          }
+          // both winner and loser is set
+          else
+          {
+            quick_select_winner = void 0;
+            quick_select_loser = void 0;
+            qs_winner.remove();
+            qs_loser.remove();
+          }
+
+          updateRows();
+
+          $('#addMatchWinner').val(quick_select_winner | 0);
+          $('#addMatchLoser').val(quick_select_loser | 0);
+        });
+
+      function resetQuickSelect() {
+          quick_select_winner = void 0;
+          quick_select_loser = void 0;
+          qs_winner.remove();
+          qs_loser.remove();
+          updateRows();
+          $('#addMatchWinner').val(quick_select_winner | 0);
+          $('#addMatchLoser').val(quick_select_loser | 0);
+      }
+
+      function updateRows() {
+        $('.quick-select-winner').removeClass('quick-select-winner');
+        $('.quick-select-loser').removeClass('quick-select-loser');
+
+        // add classes for any rows containing quick select markers
+        qs_winner.parents('tr').addClass('quick-select-winner');
+        qs_loser.parents('tr').addClass('quick-select-loser');
+      }
+
 
   });
 

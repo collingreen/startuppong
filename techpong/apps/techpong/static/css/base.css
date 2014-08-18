@@ -9,6 +9,11 @@
 #company_header { position: absolute;  }
 
 .ladder, .matches { font-size: 130%; }
+.ladder .quick-select { cursor: pointer; }
+.ladder .quick-select-winner * { background-color: #99ddaa !important; }
+.ladder .quick-select-loser * { background-color: #aaa !important; }
+.ladder .quick-select-winner td.quick-select .player_ranking,
+.ladder .quick-select-loser td.quick-select .player_ranking { display: none; }
 
 .box-tools .btn { margin: 5px; }
 
