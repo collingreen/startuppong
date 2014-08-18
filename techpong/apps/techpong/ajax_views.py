@@ -55,41 +55,6 @@ def add_match(request, company_name):
         played_time = datetime.datetime.now()
     )
 
-    # save round info if available
-    # todo: validate on model
-    round_winners = {}
-    winning_rounds = 0
-    for i in [1,2,3]:
-        field = "game%dwinner" % i
-        if field in request.POST:
-            round_winner_id = request.POST[field]
-            try:
-                round_winner_id = int(round_winner_id)
-            except ValueError, TypeError:
-                continue
-
-            if round_winner_id == winner_id:
-                round_winner = winner
-                round_loser = loser
-                winning_rounds += 1
-            else:
-                round_winner = loser
-                round_loser = winner
-
-        round_winners[i] = dict(
-                winner = round_winner,
-                loser = round_loser
-            )
-
-    # if proper number of rounds won by match winner, create round objects
-    if winning_rounds == 2:
-        for i in [1,2,3]:
-            match.round_set.create(
-                round_number = i,
-                winner = round_winners[i]['winner'],
-                loser = round_winners[i]['loser']
-            )
-
     # save company to update the last changed time
     company.save()
 

@@ -206,10 +206,6 @@
         var winner = $('#addMatchWinner').val();
         var loser = $('#addMatchLoser').val();
 
-        var g1 = $('#game1winner_winner')[0].checked;
-        var g2 = $('#game2winner_winner')[0].checked;
-        var g3 = $('#game3winner_winner')[0].checked;
-
         // target for in-modal alerts
         var alert_target = $("#addMatchAlertContainer");
 
@@ -220,21 +216,6 @@
           return;
         }
 
-        // validate wins
-        if (g1 || g2 || g3) {
-
-          // validate winner won exactly two games
-          if ( ! ((g1&&g2&&!g3) || (g1&&!g2&&g3) || (!g1&&g2&&g3)) ) {
-              showError("Game Scores Appear Invalid - Invalid Winner", alert_target);
-              return;
-          }
-
-          // verify no third game was played if winner won first 2 games
-          if (g1 && g2 && g3) {
-            showError("Game Scores Appear Invalid - Invalid Third Game", alert_target);
-            return;
-          }
-        }
 
         // send to server
         $("#addMatchModalSave").attr("disabled", true);
@@ -243,10 +224,7 @@
           headers: {"X-CSRFToken": "{{ csrf_token|safe() }}"},
           data: {
             winner: winner,
-            loser: loser,
-            game1winner: g1 ? winner : loser,
-            game2winner: g2 ? winner : loser,
-            game3winner: g3 ? winner : loser
+            loser: loser
           },
           success: function(response) {
             if (response.success) {
