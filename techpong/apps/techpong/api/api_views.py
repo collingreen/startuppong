@@ -5,6 +5,7 @@ from apps.techpong.api.api_decorators import api_get, api_post, api_endpoint
 from apps.techpong.api.api_tools import api_response, api_response_invalid
 from apps.techpong.api.api_tools import serialize_match
 
+import datetime
 
 @api_endpoint
 def test(request):
@@ -124,3 +125,70 @@ def get_recent_matches_between_players(request):
             serialize_match(m)
             for m in player1.get_recent_matches_with_player(player2)]
     return api_response(success=True, matches=matches)
+
+
+@api_post
+@api_endpoint
+def add_match(request):
+    company = request.api_info['company']
+
+    # require winner_id and loser_id
+    if 'winner_id' not in request.REQUEST or \
+            request.REQUEST['winner_id'] == '':
+        return api_response_invalid(missing_field='winner_id')
+    elif 'loser_id' not in request.REQUEST or \
+            request.REQUEST['loser_id'] == '':
+        return api_response_invalid(missing_field='loser_id')
+
+    # validate player ids
+    try:
+        winner_id = int(request.REQUEST['winner_id'])
+    except TypeError:
+        return api_response_invalid(invalid_field='winner_id')
+    except ValueError:
+        return api_response_invalid(invalid_field='winner_id')
+    try:
+        loser_id = int(request.REQUEST['loser_id'])
+    except TypeError:
+        return api_response_invalid(invalid_field='loser_id')
+    except ValueError:
+        return api_response_invalid(invalid_field='loser_id')
+
+    # find players
+    try:
+        winner = Player.objects.get(pk=winner_id)
+    except ObjectDoesNotExist:
+        return api_response(
+            success=False,
+            error='winner not found',
+            error_code='player_not_found'
+            )
+    try:
+        loser = Player.objects.get(pk=loser_id)
+    except ObjectDoesNotExist:
+        return api_response(
+            success=False,
+            error='loser not found',
+            error_code='player_not_found'
+            )
+
+    # confirm players are in company
+    if not winner.company.id == company.id or \
+            not loser.company.id == company.id:
+        return api_response(
+            success=False,
+            error='permission denied',
+            error_code='permission denied'
+            )
+
+    # create new match
+    match = company.match_set.create(
+        winner = winner,
+        loser = loser,
+        played_time = datetime.datetime.now()
+    )
+
+    # save company to update the last changed time
+    company.save()
+
+    return api_response(success=True, match_id=match.id)

@@ -1,4 +1,5 @@
 from coffin.shortcuts import Http404, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 
 from apps.techpong.models import *
@@ -13,8 +14,10 @@ def api_get(view_func):
                     status=405
                 )
         return view_func(request, *args, **kwargs)
+    return _api_get
 
 def api_post(view_func):
+    @csrf_exempt
     def _api_post(request, *args, **kwargs):
         if request.method != 'POST':
             return HttpResponse(
@@ -22,6 +25,7 @@ def api_post(view_func):
                     status=405
                 )
         return view_func(request, *args, **kwargs)
+    return _api_post
 
 def api_endpoint(view_func):
     def _api_check(request, *args, **kwargs):

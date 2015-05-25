@@ -1,4 +1,4 @@
-<div class="api-title" data-api="{{endpoint}}">{% block method %}{% endblock %} {{api_prefix}}{{endpoint}}</div>
+<div class="api-title" data-api="{{endpoint}}">{{method|upper}} {{api_prefix}}{{endpoint}}</div>
 <div class="api-content" data-api="{{endpoint}}">
   {% block description %}{% endblock %}
 
@@ -14,6 +14,7 @@
   <pre class="api-example jquery">{% block example_jquery %}
   $.ajax({
     url: '<span class="base_url"></span>{{api_prefix}}{{endpoint}}',
+    method: '{{method}}',
     data: {
       {% block example_data %}{% endblock %}api_account_id: '{{api_account_id}}',
       api_access_key: '{{api_access_key}}'

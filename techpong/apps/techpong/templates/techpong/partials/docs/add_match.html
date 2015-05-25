@@ -1,0 +1,25 @@
+{% extends 'techpong/partials/docs/docs_endpoint.html' %}
+{% set endpoint='add_match' %}
+{% set method='POST' %}
+
+{% block description %}
+<p>Add a new match between two players.</p>
+{% if not player1 or not player2 %}
+<p class='text-error'>Warning: Enter at least 2 players to run the example code.</p>
+{% endif %}
+{% endblock %}
+
+{% block parameters %}
+<ul>
+  <li>winner_id: id of the winning player</li>
+  <li>loser_id: id of the losing player</li>
+</ul>
+{% endblock %}
+
+{% block example_data %}winner_id: {{player1.id}},
+      loser_id: {{player2.id}},
+      {% endblock %}
+
+{% block response %}{
+  match_id: [id for newly created match]
+}{% endblock %}
