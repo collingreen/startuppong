@@ -180,6 +180,12 @@ class Company(models.Model):
         self.recalculating = False
         self.save()
 
+    def get_recent_matches(self, limit=None):
+        """Returns a list of recent matches"""
+        return (Match.objects
+            .filter(company=self)
+            .order_by('-played_time')[:limit or MATCH_RESULT_LIMIT]
+        )
     def __unicode__(self):
         return self.name
 
@@ -313,14 +319,24 @@ class Player(models.Model):
                 rank_changes[-CACHED_RANK_LIMIT:])
         self.save()
 
-    def get_recent_matches(self):
+    def get_recent_matches(self, limit=None):
         """Returns a list of recent matches that included this
         player."""
-
-        return (Match.objects
+        matches = (Match.objects
             .filter(Q(winner=self) | Q(loser=self))
-            .order_by('-played_time')[:MATCH_RESULT_LIMIT]
-        )
+            .order_by('-played_time'))
+        return matches[:limit or MATCH_RESULT_LIMIT]
+
+    def get_recent_matches_with_player(self, player, limit=None):
+        """Returns a list of recent matches that included this
+        player and the target player."""
+        matches = (Match.objects
+            .filter(
+                Q(winner=self, loser=player) |
+                Q(loser=self, winner=player)
+            )
+            .order_by('-played_time'))
+        return matches[:limit or MATCH_RESULT_LIMIT]
 
     def __unicode__(self):
         if self.company.show_rank and self.company.show_rating:

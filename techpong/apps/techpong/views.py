@@ -202,9 +202,22 @@ def api_docs(request, api_version='latest'):
     # TODO: get api prefix from url config
     api_version = 1
     api_version_url_path = 'v1'
+
+    company = request.user.profile.company
+    players = company.player_set.all()
+    player1, player2 = None, None
+    if len(players) > 0:
+        player1 = players[0]
+    if len(players) > 1:
+        player2 = players[1]
+
     return render(request, 'techpong/docs.html', dict(
         api_version=api_version,
         api_prefix='/api/%s/' % api_version_url_path,
         api_account_id=request.user.profile.company.get_api_account_id(),
-        api_access_key=request.user.profile.company.get_api_access_key()
+        api_access_key=request.user.profile.company.get_api_access_key(),
+
+        players=players,
+        player1=player1,
+        player2=player2
         ))

@@ -1,0 +1,29 @@
+{% extends 'techpong/partials/docs/docs_endpoint.html' %}
+{% set endpoint='get_recent_matches_for_company' %}
+
+{% block method %}GET{% endblock %}
+{% block description %}
+<p>Return a list of recent matches for the company.</p>
+{% endblock %}
+
+{% block response %}{
+  matches: [
+    {
+      id: [match_id],
+      played_time: [match_played_time],
+      winner_id: [winning_player_id],
+      winner_name: [winner_player_name],
+      winner_rank_before: [winner_rank_before_match],
+      winner_rank_after: [winner_rank_after_match],
+      winner_rating_before: [winner_rating_before_match],
+      winner_rating_after: [winner_rating_after_match],
+      loser_id: [losing_player_id],
+      loser_name: [losing_player_name],
+      loser_rank_before: [loser_rank_before_match],
+      loser_rank_after: [loser_rank_after_match],
+      loser_rating_before: [loser_rating_before_match],
+      loser_rating_after: [loser_rating_after_match]
+    },
+    ...
+  ]
+}{% endblock %}

@@ -2,6 +2,7 @@ from coffin.shortcuts import Http404, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
 from apps.techpong.models import *
+from apps.techpong.api.api_tools import api_response_invalid
 
 
 def api_get(view_func):
@@ -28,12 +29,12 @@ def api_endpoint(view_func):
         # require api_account_id
         if 'api_account_id' not in request.REQUEST \
                 or request.REQUEST['api_account_id'] == '':
-            return HttpResponse('Missing API Account ID', status=400)
+            return api_response_invalid(missing_field='api_account_id')
 
         # require api_access_key
         if 'api_access_key' not in request.REQUEST or \
                 request.REQUEST['api_access_key'] == '':
-            return HttpResponse('Missing API Access Key', status=400)
+            return api_response_invalid(missing_field='api_access_key')
 
         # look for target company with matching access key
         api_account_id = request.REQUEST['api_account_id']
