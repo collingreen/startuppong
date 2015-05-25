@@ -9,6 +9,8 @@ from django.conf import settings
 from lib.djeroku.tools.misc_tools import get_timestamp
 
 import json
+import random
+import string
 import elo
 
 MATCH_RESULT_LIMIT = 50
@@ -80,6 +82,9 @@ class Company(models.Model):
                 default='rank'
             )
 
+    api_account_id = models.CharField(max_length=64, blank=True)
+    api_access_key = models.CharField(max_length=64, blank=True)
+
     def check_permission(self, user):
         return (user.is_staff
                 or (user.profile.company and user.profile.company == self))
@@ -114,7 +119,9 @@ class Company(models.Model):
                 num_matches = self.match_set.count(),
                 num_rounds = Round.objects.filter(match__company = self).count(),
                 recent_matches = (self.match_set
-                    .order_by('-played_time')[:MATCH_RESULT_LIMIT])
+                    .order_by('-played_time')[:MATCH_RESULT_LIMIT]),
+                api_account_id = self.get_api_account_id(),
+                api_access_key = self.get_api_access_key()
                 )
 
     @transaction.commit_on_success
@@ -145,7 +152,12 @@ class Company(models.Model):
         player.update_rank(rank, match)
 
     def recache_matches(self):
-        """Resets all players and replays every match."""
+        """
+        Resets all players and replays every match.
+
+        TODO: support performing in batches in task queue
+        TODO: support starting from recent 'snapshot'
+        """
         self.recalculating = True
         self.save()
 
@@ -170,6 +182,32 @@ class Company(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def get_api_account_id(self):
+        """Return the api_account_id, generating it first if necessary."""
+        if self.api_account_id in [None, '']:
+            options = string.letters + string.digits
+            self.api_account_id = ''.join([
+                    random.choice(options)
+                    for i in range(64)
+                ])
+            self.save()
+        return self.api_account_id
+
+    def get_api_access_key(self):
+        """Return the api_access_key, generating it first if necessary."""
+        if self.api_access_key in [None, '']:
+            options = string.letters + string.digits
+            self.api_access_key = ''.join([
+                    random.choice(options)
+                    for i in range(64)
+                ])
+            self.save()
+        return self.api_access_key
+
+    def reset_api_access_key(self):
+        self.api_access_key = ''
+        return self.get_api_access_key()
 
 
 class Player(models.Model):

@@ -1,0 +1,32 @@
+<div class="api-title" data-api="{{endpoint}}">{% block method %}{% endblock %} {{api_prefix}}{{endpoint}}</div>
+<div class="api-content" data-api="{{endpoint}}">
+  {% block description %}{% endblock %}
+
+  <h4>Parameters:</h4>
+  {% block parameters %}
+  <p>None</p>
+  {% endblock parameters %}
+
+  <h4>Response:</h4>
+  <pre class="api_response">{% block response %}{% endblock %}</pre>
+
+  <h4>Example:</h4>
+  <pre class="api-example jquery">{% block example_jquery %}
+  $.ajax({
+    url: '<span class="base_url"></span>{{api_prefix}}{{endpoint}}',
+    data: {
+      {% block example_data %}{% endblock %}api_account_id: '{{api_account_id}}',
+      api_access_key: '{{api_access_key}}'
+    },
+    success: function (data, status, xhr) {
+      showSuccess(data);
+      $('#api-example-output').html(data);
+    },
+    error: function (xhr, status, error) {
+      var errorContent = status + ': ' + error;
+      showError(errorContent);
+      $('#api-example-output').html(errorContent);
+    }
+  });{% endblock example_jquery %}</pre>
+
+</div>

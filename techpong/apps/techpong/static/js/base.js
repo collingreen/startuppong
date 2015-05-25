@@ -61,7 +61,16 @@ function showAlert(message, alert_class, target, timeout) {
         })
         .html("&times;")
     );
-    alert_div.appendTo(target || $('#alert_container'));
+
+    if (!target) {
+      if ($('#alert_container').length > 0) {
+        target = $('#alert_container');
+      } else {
+        target = $('#alert_wrapper');
+      }
+    }
+
+    alert_div.appendTo(target);
     alert_div.alert();
 
     if (timeout !== false) {
@@ -102,6 +111,61 @@ function checkForCompanyUpdate(check_for_updates_url, cb) {
       if (response.latest_change) {
         cb && cb(response.latest_change);
       }
+    }
+  });
+}
+
+/**
+ * apiCall
+ *
+ * Make an api call to the server. Prepends the
+ * api version unless `prefix` is explicitly given.
+ *
+ * opts:
+ *   - url: url to access
+ *   - url_prefix (optional): explicit prefix - defaults to latest api version
+ *   - data (optional): an object to send in the request
+ *   - callback (optional): function to call when complete
+ *     - callback is called with (err, res) where err is true if an
+ *     error occurred and response is an object representing the api response
+ */
+function apiCall(opts) {
+
+  var prefix = 'url_prefix' in opts ? opts.url_prefix : '/api/v1/';
+  var url = prefix + opts.url;
+  var cb = opts.callback;
+
+  $.ajax(url, {
+    method: "POST",
+    headers: {"X-CSRFToken": window.csrf_token},
+    data: opts.data || {},
+    success: function(response) {
+      var res = {};
+      var err = null;
+
+      // try to JSON parse the response
+      try {
+        res = JSON.parse(response);
+      } catch (e) {
+        res.error = "Invalid Response";
+        res.error_code = "invalid_response";
+        err = true;
+      }
+
+      cb && cb(err, res);
+    },
+    failure: function(response) {
+      var res = {};
+      // try to JSON parse the response
+      try {
+        res = JSON.parse(response);
+      } catch (e) {
+        res.error = "Invalid Response";
+        res.error_code = "invalid_response";
+        err = true;
+      }
+
+      cb && cb(true, res);
     }
   });
 }

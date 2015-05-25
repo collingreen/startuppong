@@ -180,7 +180,9 @@ def account(request):
     return render(request, 'techpong/account.html', {
         'form': company_form,
         'company': request.user.profile.company,
-        'player': request.user
+        'player': request.user,
+        'api_account_id': request.user.profile.company.get_api_account_id(),
+        'api_access_key': request.user.profile.company.get_api_access_key()
     })
 
 @login_required
@@ -193,3 +195,16 @@ def recache_matches(request):
         company.recache_matches()
 
     return HttpResponse("Recached all matches for %d companies" % count)
+
+@login_required
+def api_docs(request, api_version='latest'):
+    # TODO: implement, then enforce api version :D
+    # TODO: get api prefix from url config
+    api_version = 1
+    api_version_url_path = 'v1'
+    return render(request, 'techpong/docs.html', dict(
+        api_version=api_version,
+        api_prefix='/api/%s/' % api_version_url_path,
+        api_account_id=request.user.profile.company.get_api_account_id(),
+        api_access_key=request.user.profile.company.get_api_access_key()
+        ))

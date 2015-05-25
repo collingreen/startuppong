@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 
 from lib.djeroku.tools.view_tools import json_response, validate_required
 from apps.techpong.models import *
+from apps.techpong.api.api_tools import api_response
 
 import datetime
 import time
@@ -212,4 +213,12 @@ def check_for_update(request, company_name):
     timestamp = time.mktime(company.latest_change.timetuple())
     return json_response(True,
         latest_change = timestamp
-    );
+    )
+
+# NOTE: uses new api tools instead of matching json_response above
+@login_required
+def reset_api_access_key(request):
+    if request.user.profile.company:
+        key = request.user.profile.company.reset_api_access_key()
+        return api_response(success=True, api_access_key=key)
+    return api_response(success=False, error="Invalid company", error_code="invalid_company")
