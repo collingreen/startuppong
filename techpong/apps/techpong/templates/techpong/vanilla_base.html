@@ -75,6 +75,7 @@
             {% block login_button %}
               {% if request.user and request.user.username and request.user.profile.company %}
                 <a href="{% url 'logout' %}" class="navbar-btn btn">Logout {{request.user.username}}</a>
+                <a href="{% url 'dashboard' company_name=request.user.profile.company.short_name %}" class="btn btn-info">Leaderboard</a>
               {% else %}
                 <a href="{% url 'login' %}" class="navbar-btn btn">Login</a>
               {% endif %}
