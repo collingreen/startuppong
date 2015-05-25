@@ -8,4 +8,5 @@ urlpatterns = patterns('apps.techpong.api.api_views',
     url(r'^get_recent_matches_between_players$', 'get_recent_matches_between_players'),
 
     url(r'^add_match$', 'add_match'),
+    url(r'^add_player$', 'add_player')
 )

@@ -1,0 +1,21 @@
+{% extends 'techpong/partials/docs/docs_endpoint.html' %}
+{% set endpoint='add_player' %}
+{% set method='POST' %}
+
+{% block description %}
+<p>Add a new player. Must be unique among
+players for this company.</p>
+{% endblock %}
+
+{% block parameters %}
+<ul>
+  <li>name: name of the new player</li>
+</ul>
+{% endblock %}
+
+{% block example_data %}name: '{{new_player_name}}',
+      {% endblock %}
+
+{% block response %}{
+  player_id: [id for newly created player]
+}{% endblock %}

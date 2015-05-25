@@ -211,6 +211,15 @@ def api_docs(request, api_version='latest'):
     if len(players) > 1:
         player2 = players[1]
 
+    raw_new_player_name = 'new_player'
+    new_player_name = raw_new_player_name
+    count = 1
+    while Player.objects.filter(
+            name=new_player_name,
+            company=company).count() > 0:
+        count += 1
+        new_player_name = raw_new_player_name + str(count)
+
     return render(request, 'techpong/docs.html', dict(
         api_version=api_version,
         api_prefix='/api/%s/' % api_version_url_path,
@@ -219,5 +228,6 @@ def api_docs(request, api_version='latest'):
 
         players=players,
         player1=player1,
-        player2=player2
+        player2=player2,
+        new_player_name=new_player_name
         ))

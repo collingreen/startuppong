@@ -126,7 +126,6 @@ def get_recent_matches_between_players(request):
             for m in player1.get_recent_matches_with_player(player2)]
     return api_response(success=True, matches=matches)
 
-
 @api_post
 @api_endpoint
 def add_match(request):
@@ -192,3 +191,39 @@ def add_match(request):
     company.save()
 
     return api_response(success=True, match_id=match.id)
+
+@api_post
+@api_endpoint
+def add_player(request):
+    company = request.api_info['company']
+
+    # require name
+    if 'name' not in request.REQUEST or \
+            request.REQUEST['name'] == '':
+        return api_response_invalid(missing_field='name')
+    name = request.REQUEST['name']
+
+    # check for duplicates
+    existing_count = Player.objects.filter(
+            name=name,
+            company=company
+        ).count()
+
+    if existing_count > 0:
+        return api_response(
+            success=False,
+            error='duplicate player name',
+            error_code='player_already_exists'
+            )
+
+    # create a new player
+    player = company.player_set.create(
+        name = name,
+        rank = company.player_set.count() + 1,
+        rating = 500, # todo: company can specify the starting rating
+    )
+
+    # save company to update the last changed time
+    company.save()
+
+    return api_response(success=True, player_id=player.id)
