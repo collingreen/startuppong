@@ -180,6 +180,15 @@
       $('#api-example-output-wrapper').addClass('hidden');
       $('#api-example-output').html('');
 
+      // hide footer if no example, show otherwise
+      var example = $('#api-content .api-example');
+
+      if (example.length > 0) {
+        $('.box-footer').removeClass('hidden');
+      } else {
+        $('.box-footer').addClass('hidden');
+      }
+
       // set location hash
       try {
         window.location.hash = api;
