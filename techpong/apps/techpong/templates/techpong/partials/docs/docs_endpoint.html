@@ -20,8 +20,9 @@
       api_access_key: '{{api_access_key}}'
     },
     success: function (data, status, xhr) {
-      showSuccess(data);
-      $('#api-example-output').html(data);
+      var pretty = JSON.stringify(JSON.parse(data), null, 2);
+      $('#api-example-output').html(pretty);
+      showSuccess(pretty);
     },
     error: function (xhr, status, error) {
       var errorContent = status + ': ' + error;
