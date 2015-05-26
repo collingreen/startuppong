@@ -1,0 +1,44 @@
+{% extends 'techpong/partials/docs/docs_endpoint.html' %}
+{% set endpoint='get_recent_matches_between_players' %}
+{% set method='GET' %}
+
+{% block description %}
+<p>Return a list of recent matches between the given two players. Both
+players must be in the requesting company.</p>
+{% if not player1 or not player2 %}
+<p class='text-error'>Warning: Enter at least 2 players to run the example code.</p>
+{% endif %}
+{% endblock %}
+
+{% block parameters %}
+<ul>
+  <li>player1_id: id of the first player being queried</li>
+  <li>player2_id: id of the second player being queried</li>
+</ul>
+{% endblock %}
+
+{% block example_data %}player1_id: {{player1.id}},
+      player2_id: {{player2.id}},
+      {% endblock %}
+
+{% block response %}{
+  matches: [
+    {
+      id: [match_id],
+      played_time: [match_played_time],
+      winner_id: [winning_player_id],
+      winner_name: [winner_player_name],
+      winner_rank_before: [winner_rank_before_match],
+      winner_rank_after: [winner_rank_after_match],
+      winner_rating_before: [winner_rating_before_match],
+      winner_rating_after: [winner_rating_after_match],
+      loser_id: [losing_player_id],
+      loser_name: [losing_player_name],
+      loser_rank_before: [loser_rank_before_match],
+      loser_rank_after: [loser_rank_after_match],
+      loser_rating_before: [loser_rating_before_match],
+      loser_rating_after: [loser_rating_after_match]
+    },
+    ...
+  ]
+}{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'techpong/partials/docs/docs_endpoint.html' %}
+{% set endpoint='get_players' %}
+{% set method='GET' %}
+
+{% block description %}
+<p>Return all players in the company.</p>
+{% endblock %}
+
+{% block response %}{
+  players: [
+    {
+      id: [user_id],
+      name: [user_name],
+      rank: [user_rank],
+      rating: [user_rating]
+    }
+  ]
+}{% endblock %}

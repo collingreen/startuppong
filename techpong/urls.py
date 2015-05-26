@@ -13,6 +13,7 @@ admin.autodiscover()
 # See: https://docs.djangoproject.com/en/dev/topics/http/urls/
 urlpatterns = patterns('',
     url(r'', include('apps.techpong.urls')),
+    url(r'api/v1/', include('apps.techpong.api.api_urls')),
 
     # Admin panel and documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

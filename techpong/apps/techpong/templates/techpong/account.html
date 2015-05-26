@@ -9,10 +9,10 @@
         {{form.non_field_errors()|safe}}
         {% for field in form %}
         <div class="form-group">
-          <div class="col-lg-3">
+          <div class="col-sm-3">
             <label class="control-label" for="{{field.id}}">{{field.label_tag()|safe}}</label>
           </div>
-          <div class="col-lg-9">
+          <div class="col-sm-9">
             {{field.errors|safe}}
             {{field|safe}}
           </div>
@@ -20,14 +20,80 @@
         {% endfor %}
 
         <div class="row">
-          <div class="col-lg-4 col-lg-offset-2 text-center">
+          <div class="col-sm-4 col-sm-offset-2 text-center">
             <a class="btn" id="backToLadder">Return to Ladder</a>
             <button type="submit" class="btn btn-primary" id="saveAccount">Save</button>
           </div>
       </form>
     </section><!-- /.content -->
+
+    <section>
+      <form role="form" class="form-horizontal" id="accountForm" method="post" action="">
+        <div class="form-group">
+          <div class="col-sm-3">
+            <label class="control-label" for="api_account_id">
+              <h4>API Access:</h4>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-sm-3">
+            <label class="control-label" for="api_account_id">API Account ID</label>
+          </div>
+          <div class="col-sm-9">
+            <div id="api_account_id">{{api_account_id}}</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-sm-3">
+            <label class="control-label" for="api_access_key">API Access Key</label>
+          </div>
+          <div class="col-md-6 col-sm-9">
+            <div id="api_access_key">{{api_access_key}}</div>
+          </div>
+          <div class="col-sm-9 col-sm-offset-3">
+            <a
+              class="btn btn-info"
+              data-toggle="modal"
+              data-target="#revokeApiKeyModal"
+              title="Revoke API Key"
+              data-tooltip>Revoke API Key</a>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-9">
+            <a href="{% url 'api_docs' %}">API Documentation</a>
+          </div>
+        </div>
+      </form>
+
+    </section>
   </aside><!-- /.right-side -->
 </div><!-- ./wrapper -->
+
+<div class="modal fade" id="revokeApiKeyModal" tabindex="-1" role="dialog" aria-labelledby="addMatchModalLabel" aria-hidden="true">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title" id="revokeApiKeyLabel">Revoke API Key</h4>
+    </div>
+    <div class="modal-body">
+      <p>This will revoke you current API Access Key and replace it with a new
+      one. All requests using the old key will immediately stop functioning.
+      Once reset, the old key cannot be restored.</p>
+
+      <h5>Are you sure you want to revoke your API Access Key?</h5>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" id="revokeApiKey">Revoke API Key</button>
+       </div>
+    </div>
+  </div>
+</div>
+
 {% endblock content %}
 
 {% block additional_js %}
@@ -35,6 +101,27 @@
   $(window).on('load', function() {
     $('#backToLadder').on('click', function() {
       window.location = "{% url 'dashboard' company_name=company.short_name %}";
+    });
+
+    $('#revokeApiKey').on('click', function () {
+      $('#revokeApiKeyModal').modal('hide');
+      apiCall({
+        url: "{% url 'ajax_reset_api_access_key' %}",
+        url_prefix: '',
+        callback: function (err, res) {
+          if (err || !res) {
+            var error = (res && res.err) || 'Unknown error while revoking key';
+            showError("Error: " + error);
+          } else {
+            showSuccess("API Key Reset");
+            if (res && res.api_access_key) {
+              $('#api_access_key').html(res.api_access_key);
+            } else {
+              $('#api_access_key').html('Reload to view new key');
+            }
+          }
+        }
+      });
     });
   });
 </script>

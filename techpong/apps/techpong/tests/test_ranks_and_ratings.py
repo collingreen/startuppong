@@ -9,12 +9,6 @@ from django.test import TestCase
 from apps.techpong.models import *
 import datetime
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
 
 PLAYER1_NAME = "Player 1"
 PLAYER1_RANK = 3

@@ -1,0 +1,229 @@
+{% extends 'techpong/base.html' %}
+
+{% block content %}
+<div class="wrapper">
+  <!-- Right side column. Contains the navbar and content of the page -->
+  <aside class="right-side strech">
+    <!-- Content Header (Page header) -->
+
+    <section class="content">
+
+      <!-- Main row -->
+      <div class="row">
+        <!-- Left col -->
+        <section class="col-sm-3">
+          <ul id='api_nav_ul'>
+          </ul>
+        </section><!-- /.Left col -->
+
+        <!-- right col -->
+        <section class="col-sm-9">
+          <!-- Chat box -->
+          <div class="box box-info">
+            <div class="box-header">
+              <div class="pull-right box-tools">
+                <button class="btn btn-info pull-right" data-toggle="modal" data-target="#addMatchModal" title="jQuery Example" data-tooltip>
+                  <div class='fa'>jQuery</div>
+                </button>
+              </div>
+              <h3 class="box-title" id="api-content-title">StartupPong API</h3>
+            </div>
+            <div class="box-body" id="api-content"></div>
+            <div class="box-footer">
+              <div id="api-example-output-wrapper" class="hidden">
+                <h4>Example Output:</h4>
+                <pre id="api-example-output"></pre>
+              </div>
+              <a class='btn btn-info run-example' title='Execute this example code' data-tooltip>Run Example</a>
+            </div>
+          </div><!-- /.box -->
+        </section><!-- right col -->
+      </div><!-- /.row (main row) -->
+
+    </section><!-- /.content -->
+  </aside><!-- /.right-side -->
+</div><!-- ./wrapper -->
+
+<div class="hidden">
+  <div class="api-title" data-api="instructions" id="instructions">StartupPong API</div>
+  <div class="api-content" data-api="instructions" id="instructions_title">
+    <h5 class="text-warning">Warning - Experimental API</h5>
+    <p class="text-warning">
+    The StartupPong API has not yet been finalized. At this point,
+    anything could change, including available endpoints,
+    authentication schemes, and API responses.  Please keep this in
+    mind.
+    </p>
+    <br/>
+
+    <p>
+    The StartupPong API allows you to view and control your Startup
+    Pong ladder programatically from third party applications.
+    </p>
+
+    <h4 class='text-info'>Your API Account ID: {{api_account_id}}</h4>
+    <h4 class='text-info'>Your API Access Key: {{api_access_key}}</h4>
+
+    <p>
+    All API endpoints share some of the same basic behavior, as listed below.
+    </p>
+    <ul>
+      <li>
+        <p>
+        All API endpoints are accessed through standard HTTP requests
+        and enforce either GET or POST. You can assume all GET requests
+        have no side effects and all POST requests do.
+        </p>
+      </li>
+      <li>
+        <p>
+        All API endpoints require authentication fields with every request.
+        Currently, this simply means the fields must be included - no signing
+        or other extra steps are required (but could be in the future).
+        </p>
+
+        <h4>Required Fields:</h4>
+        <ul>
+          <li>API Account ID - all requests must include an
+          `api_account_id` field for the requested company. You can
+          find this field above and on the company account page. Failing to
+          include this will result in a 400 BAD REQUEST response.
+          </li>
+          <li>API Access Key - all requests must include an
+            `api_access_key` field for the requested company. You can
+            find this field above and on the company account page. Note, this
+            can be reset from the company account page to revoke all
+            existing API access at any time. Failing to include
+            this will result in a 400 BAD REQUEST response.
+          </li>
+        </ul>
+        <p>
+        NOTE: Specifying an incorrect `api_account_id` and `api_access_key`
+        combination will result in a 403 FORBIDDEN response. If you
+        experience this, you should double check your API key on
+        your account dashboard. Any time this account key is reset,
+        all of your requests using the old key will fail.
+        </p>
+      </li>
+      <li>
+        <p>All API endpoints return a JSON encoded object upon completion. Every
+        response includes a boolean `success` field, plus any additional content
+        defined by the particular endpoint.
+        </p>
+      </li>
+    </ul>
+
+    <p>Use the API explorer to the left to view the available AI
+    endpoints.</p>
+
+    <p>Remember, StartupPong is open source - if you are adding
+    a feature that could benefit the entire startuppong community,
+    consider submitting a pull request instead of creating an
+    external tool.
+    </p>
+
+    <h4 class="text-info">If you are using the free version
+    on StartupPong.com, please be responsible with your API call
+    frequency.
+    </h4>
+
+    <h3>Happy coding!</h3>
+  </div>
+
+  {% include 'techpong/partials/docs/test.html' %}
+  {% include 'techpong/partials/docs/get_players.html' %}
+  {% include 'techpong/partials/docs/get_recent_matches_for_company.html' %}
+  {% include 'techpong/partials/docs/get_recent_matches_for_player.html' %}
+  {% include 'techpong/partials/docs/get_recent_matches_between_players.html' %}
+  {% include 'techpong/partials/docs/add_match.html' %}
+  {% include 'techpong/partials/docs/add_player.html' %}
+
+</div>
+{% endblock content %}
+
+{% block additional_js %}
+<script type='text/javascript'>
+
+  $(document).on('ready', function(){
+
+    $('.run-example').on('click', function () {
+      var element = $(this);
+
+      // get current example code
+      var example = $('#api-content .api-example');
+
+      // show output if necessary
+      $('#api-example-output-wrapper').removeClass('hidden');
+
+      // run example code
+      eval(example.text());
+    });
+
+    function displayAPI(api) {
+      // clear example block
+
+      // find content block -- fall back to instructions
+      var content = $('.api-content[data-api=' + api + ']');
+      if (!content) {
+        content = $('#instructions');
+      }
+      var title = $('.api-title[data-api=' + api + ']');
+      if (!title) {
+        title = $('#instructions_title');
+      }
+
+      // set new title and content
+      $('#api-content-title').html(title.html());
+      $('#api-content').html(content.html());
+
+      // clear example content
+      $('#api-example-output-wrapper').addClass('hidden');
+      $('#api-example-output').html('');
+
+      // hide footer if no example, show otherwise
+      var example = $('#api-content .api-example');
+
+      if (example.length > 0) {
+        $('.box-footer').removeClass('hidden');
+      } else {
+        $('.box-footer').addClass('hidden');
+      }
+
+      // set location hash
+      try {
+        window.location.hash = api;
+      } catch (e) {}
+    }
+
+    // start with linked API or instructions block
+    var startingAPI = 'instructions';
+    if (window.location.hash && window.location.hash !== '') {
+      var startingAPI = window.location.hash;
+      if (startingAPI.startsWith('#')) {
+        startingAPI = startingAPI.substr(1);
+      }
+    }
+    displayAPI(startingAPI);
+
+    // generate api links
+    $('.api-title').each(function (i, item) {
+      var api = $(item).attr('data-api');
+      var li=$('<li/>');
+      var link=$('<a/>')
+            .html(api)
+            .addClass('api-nav-link')
+            .prop('href', '#')
+            .attr('data-api', api)
+            .on('click', function (e) {
+              e.stopPropagation();
+              e.preventDefault();
+              var target = $(this).attr('data-api');
+              displayAPI(target);
+            });
+      li.append(link);
+      li.appendTo($('#api_nav_ul'));
+    });
+
+  });
+</script>
+{% endblock additional_js %}
