@@ -8,10 +8,12 @@ from apps.techpong.api.api_tools import serialize_match
 
 import datetime
 
+@api_get
 @api_endpoint
 def test(request):
     return api_response(success=True, foo='bar')
 
+@api_get
 @api_endpoint
 def get_players(request):
     info = request.api_info['company'].get_info()
@@ -23,12 +25,14 @@ def get_players(request):
         ) for p in info['players']]
     return api_response(success=True, players=players)
 
+@api_get
 @api_endpoint
 def get_recent_matches_for_company(request):
     company = request.api_info['company']
     matches = [serialize_match(m) for m in company.get_recent_matches()]
     return api_response(success=True, matches=matches)
 
+@api_get
 @api_endpoint
 def get_recent_matches_for_player(request):
     company = request.api_info['company']
@@ -68,6 +72,7 @@ def get_recent_matches_for_player(request):
     matches = [serialize_match(m) for m in player.get_recent_matches()]
     return api_response(success=True, matches=matches)
 
+@api_get
 @api_endpoint
 def get_recent_matches_between_players(request):
     company = request.api_info['company']
