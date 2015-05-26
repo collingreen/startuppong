@@ -1,4 +1,4 @@
-from coffin.shortcuts import HttpResponse
+from django.shortcuts import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
 from apps.techpong.models import *
@@ -38,13 +38,13 @@ def get_recent_matches_for_player(request):
     company = request.api_info['company']
 
     # require player_id
-    if 'player_id' not in request.REQUEST or \
-            request.REQUEST['player_id'] == '':
+    if 'player_id' not in request.GET or \
+            request.GET['player_id'] == '':
         return api_response_invalid(missing_field='player_id')
 
     # validate player id
     try:
-        player_id = int(request.REQUEST['player_id'])
+        player_id = int(request.GET['player_id'])
     except TypeError:
         return api_response_invalid(invalid_field='player_id')
     except ValueError:
@@ -78,22 +78,22 @@ def get_recent_matches_between_players(request):
     company = request.api_info['company']
 
     # require player1_id and player2_id
-    if 'player1_id' not in request.REQUEST or \
-            request.REQUEST['player1_id'] == '':
+    if 'player1_id' not in request.GET or \
+            request.GET['player1_id'] == '':
         return api_response_invalid(missing_field='player1_id')
-    elif 'player2_id' not in request.REQUEST or \
-            request.REQUEST['player2_id'] == '':
+    elif 'player2_id' not in request.GET or \
+            request.GET['player2_id'] == '':
         return api_response_invalid(missing_field='player2_id')
 
     # validate player ids
     try:
-        player1_id = int(request.REQUEST['player1_id'])
+        player1_id = int(request.GET['player1_id'])
     except TypeError:
         return api_response_invalid(invalid_field='player1_id')
     except ValueError:
         return api_response_invalid(invalid_field='player1_id')
     try:
-        player2_id = int(request.REQUEST['player2_id'])
+        player2_id = int(request.GET['player2_id'])
     except TypeError:
         return api_response_invalid(invalid_field='player2_id')
     except ValueError:
@@ -138,22 +138,22 @@ def add_match(request):
     company = request.api_info['company']
 
     # require winner_id and loser_id
-    if 'winner_id' not in request.REQUEST or \
-            request.REQUEST['winner_id'] == '':
+    if 'winner_id' not in request.POST or \
+            request.POST['winner_id'] == '':
         return api_response_invalid(missing_field='winner_id')
-    elif 'loser_id' not in request.REQUEST or \
-            request.REQUEST['loser_id'] == '':
+    elif 'loser_id' not in request.POST or \
+            request.POST['loser_id'] == '':
         return api_response_invalid(missing_field='loser_id')
 
     # validate player ids
     try:
-        winner_id = int(request.REQUEST['winner_id'])
+        winner_id = int(request.POST['winner_id'])
     except TypeError:
         return api_response_invalid(invalid_field='winner_id')
     except ValueError:
         return api_response_invalid(invalid_field='winner_id')
     try:
-        loser_id = int(request.REQUEST['loser_id'])
+        loser_id = int(request.POST['loser_id'])
     except TypeError:
         return api_response_invalid(invalid_field='loser_id')
     except ValueError:
@@ -204,10 +204,10 @@ def add_player(request):
     company = request.api_info['company']
 
     # require name
-    if 'name' not in request.REQUEST or \
-            request.REQUEST['name'] == '':
+    if 'name' not in request.POST or \
+            request.POST['name'] == '':
         return api_response_invalid(missing_field='name')
-    name = request.REQUEST['name']
+    name = request.POST['name']
 
     # check for duplicates
     existing_count = Player.objects.filter(

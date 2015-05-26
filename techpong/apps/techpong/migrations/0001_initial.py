@@ -1,162 +1,102 @@
 # -*- coding: utf-8 -*-
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+from django.conf import settings
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'UserProfile'
-        db.create_table(u'techpong_userprofile', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('company', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['techpong.Company'], null=True, blank=True)),
-        ))
-        db.send_create_signal(u'techpong', ['UserProfile'])
+    dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
 
-        # Adding model 'Company'
-        db.create_table(u'techpong_company', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('short_name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('joined_time', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('location', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('image_url', self.gf('django.db.models.fields.URLField')(max_length=255)),
-        ))
-        db.send_create_signal(u'techpong', ['Company'])
-
-        # Adding model 'Player'
-        db.create_table(u'techpong_player', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('company', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['techpong.Company'])),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('rating', self.gf('django.db.models.fields.FloatField')(default=0.0)),
-        ))
-        db.send_create_signal(u'techpong', ['Player'])
-
-        # Adding model 'Match'
-        db.create_table(u'techpong_match', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('company', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['techpong.Company'])),
-            ('winner', self.gf('django.db.models.fields.related.ForeignKey')(related_name='match_winner', to=orm['techpong.Player'])),
-            ('loser', self.gf('django.db.models.fields.related.ForeignKey')(related_name='match_loser', to=orm['techpong.Player'])),
-            ('winner_rating_before', self.gf('django.db.models.fields.FloatField')()),
-            ('loser_rating_before', self.gf('django.db.models.fields.FloatField')()),
-            ('winner_rating_after', self.gf('django.db.models.fields.FloatField')()),
-            ('loser_rating_after', self.gf('django.db.models.fields.FloatField')()),
-            ('played_time', self.gf('django.db.models.fields.DateTimeField')()),
-        ))
-        db.send_create_signal(u'techpong', ['Match'])
-
-        # Adding model 'Round'
-        db.create_table(u'techpong_round', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('match', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['techpong.Match'])),
-            ('round_number', self.gf('django.db.models.fields.PositiveSmallIntegerField')()),
-            ('player1_score', self.gf('django.db.models.fields.IntegerField')()),
-            ('player2_score', self.gf('django.db.models.fields.IntegerField')()),
-        ))
-        db.send_create_signal(u'techpong', ['Round'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'UserProfile'
-        db.delete_table(u'techpong_userprofile')
-
-        # Deleting model 'Company'
-        db.delete_table(u'techpong_company')
-
-        # Deleting model 'Player'
-        db.delete_table(u'techpong_player')
-
-        # Deleting model 'Match'
-        db.delete_table(u'techpong_match')
-
-        # Deleting model 'Round'
-        db.delete_table(u'techpong_round')
-
-
-    models = {
-        u'auth.group': {
-            'Meta': {'object_name': 'Group'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
-        },
-        u'auth.permission': {
-            'Meta': {'ordering': "(u'content_type__app_label', u'content_type__model', u'codename')", 'unique_together': "((u'content_type', u'codename'),)", 'object_name': 'Permission'},
-            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        u'auth.user': {
-            'Meta': {'object_name': 'User'},
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
-        },
-        u'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        u'techpong.company': {
-            'Meta': {'object_name': 'Company'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'image_url': ('django.db.models.fields.URLField', [], {'max_length': '255'}),
-            'joined_time': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'location': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'short_name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        u'techpong.match': {
-            'Meta': {'ordering': "['-played_time']", 'object_name': 'Match'},
-            'company': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['techpong.Company']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'loser': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'match_loser'", 'to': u"orm['techpong.Player']"}),
-            'loser_rating_after': ('django.db.models.fields.FloatField', [], {}),
-            'loser_rating_before': ('django.db.models.fields.FloatField', [], {}),
-            'played_time': ('django.db.models.fields.DateTimeField', [], {}),
-            'winner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'match_winner'", 'to': u"orm['techpong.Player']"}),
-            'winner_rating_after': ('django.db.models.fields.FloatField', [], {}),
-            'winner_rating_before': ('django.db.models.fields.FloatField', [], {})
-        },
-        u'techpong.player': {
-            'Meta': {'object_name': 'Player'},
-            'company': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['techpong.Company']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'rating': ('django.db.models.fields.FloatField', [], {'default': '0.0'})
-        },
-        u'techpong.round': {
-            'Meta': {'object_name': 'Round'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'match': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['techpong.Match']"}),
-            'player1_score': ('django.db.models.fields.IntegerField', [], {}),
-            'player2_score': ('django.db.models.fields.IntegerField', [], {}),
-            'round_number': ('django.db.models.fields.PositiveSmallIntegerField', [], {})
-        },
-        u'techpong.userprofile': {
-            'Meta': {'object_name': 'UserProfile'},
-            'company': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['techpong.Company']", 'null': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
-        }
-    }
-
-    complete_apps = ['techpong']
+    operations = [
+        migrations.CreateModel(
+            name='Company',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=100)),
+                ('short_name', models.CharField(max_length=100)),
+                ('joined_time', models.DateTimeField(auto_now_add=True)),
+                ('location', models.CharField(max_length=100)),
+                ('banner_url', models.URLField(max_length=255, blank=True)),
+                ('logo_url', models.URLField(max_length=255, blank=True)),
+                ('recalculating', models.BooleanField(default=False)),
+                ('latest_change', models.DateTimeField(auto_now=True)),
+                ('show_rank', models.BooleanField(default=True)),
+                ('show_rating', models.BooleanField(default=True)),
+                ('order_by', models.CharField(default=b'rank', max_length=50, choices=[(b'rank', b'Rank'), (b'rating', b'Rating')])),
+                ('api_account_id', models.CharField(max_length=64, blank=True)),
+                ('api_access_key', models.CharField(max_length=64, blank=True)),
+            ],
+            options={
+                'verbose_name_plural': 'Companies',
+            },
+        ),
+        migrations.CreateModel(
+            name='Match',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('played_time', models.DateTimeField()),
+                ('winner_rank_before', models.PositiveIntegerField(null=True, blank=True)),
+                ('winner_rank_after', models.PositiveIntegerField(null=True, blank=True)),
+                ('loser_rank_before', models.PositiveIntegerField(null=True, blank=True)),
+                ('loser_rank_after', models.PositiveIntegerField(null=True, blank=True)),
+                ('winner_rating_before', models.FloatField(null=True, blank=True)),
+                ('loser_rating_before', models.FloatField(null=True, blank=True)),
+                ('winner_rating_after', models.FloatField(null=True, blank=True)),
+                ('loser_rating_after', models.FloatField(null=True, blank=True)),
+                ('match_quality', models.FloatField(null=True, blank=True)),
+                ('company', models.ForeignKey(to='techpong.Company')),
+            ],
+            options={
+                'ordering': ['-played_time'],
+                'verbose_name_plural': 'Matches',
+            },
+        ),
+        migrations.CreateModel(
+            name='Player',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=100)),
+                ('rating', models.FloatField(default=500.0)),
+                ('rank', models.PositiveIntegerField(null=True, blank=True)),
+                ('cached_rating_changes', models.TextField(blank=True)),
+                ('cached_rank_changes', models.TextField(blank=True)),
+                ('cached_results', models.TextField(blank=True)),
+                ('company', models.ForeignKey(to='techpong.Company')),
+            ],
+            options={
+                'ordering': ['rank'],
+            },
+        ),
+        migrations.CreateModel(
+            name='Round',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('round_number', models.PositiveSmallIntegerField()),
+                ('loser', models.ForeignKey(related_name='round_loser', blank=True, to='techpong.Player', null=True)),
+                ('match', models.ForeignKey(to='techpong.Match')),
+                ('winner', models.ForeignKey(related_name='round_winner', blank=True, to='techpong.Player', null=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='UserProfile',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('company', models.ForeignKey(blank=True, to='techpong.Company', null=True)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.AddField(
+            model_name='match',
+            name='loser',
+            field=models.ForeignKey(related_name='match_loser', to='techpong.Player'),
+        ),
+        migrations.AddField(
+            model_name='match',
+            name='winner',
+            field=models.ForeignKey(related_name='match_winner', to='techpong.Player'),
+        ),
+    ]

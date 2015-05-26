@@ -1,4 +1,4 @@
-from coffin.shortcuts import HttpResponse
+from django.shortcuts import HttpResponse
 import json
 import datetime
 import time

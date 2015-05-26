@@ -1,4 +1,4 @@
-from coffin.shortcuts import render, render_to_response, Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, render_to_response, Http404, HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator, EmptyPage, InvalidPage

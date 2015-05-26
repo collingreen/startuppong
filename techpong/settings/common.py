@@ -136,9 +136,12 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-loaders
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
+    # 'django.template.loaders.filesystem.Loader',
+    # 'django.template.loaders.app_directories.Loader',
+    'django_jinja.loaders.FileSystemLoader',
+    'django_jinja.loaders.AppLoader',
 )
+DEFAULT_JINJA2_TEMPLATE_INTERCEPT_RE = r"^(?!admin/).*"
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-dirs
 TEMPLATE_DIRS = (
@@ -190,17 +193,15 @@ DJANGO_APPS = (
 
 THIRD_PARTY_APPS = (
     # Database migration helpers:
-    'south',
+    # 'south', # removed for change to 1.8
+
+    'django_jinja',
 
     # Static file management:
     'pipeline',
 
     # Asynchronous task queue:
     'djcelery',
-
-	# gargoyle and nexus manager
-	'gargoyle',
-	'nexus',
 
     'django_extensions',
 	

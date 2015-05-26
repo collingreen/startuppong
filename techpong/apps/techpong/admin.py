@@ -6,20 +6,20 @@ from django.forms.models import inlineformset_factory
 from apps.techpong.models import *
 
 # Allow user profiles to be edited inline with User
-class UserProfileFormSet(inlineformset_factory(User, UserProfile)):
-    def __init__(self, *args, **kwargs):
-        super(UserProfileFormSet, self).__init__(*args, **kwargs)
-        self.can_delete = False
+# class UserProfileFormSet(inlineformset_factory(User, UserProfile)):
+#     def __init__(self, *args, **kwargs):
+#         super(UserProfileFormSet, self).__init__(*args, **kwargs)
+#         self.can_delete = False
 
-class UserProfileInline(admin.StackedInline):
-    model = UserProfile
-    fk_name = 'user'
-    max_num = 1
-    extra = 0
-    formset = UserProfileFormSet
+# class UserProfileInline(admin.StackedInline):
+#     model = UserProfile
+#     fk_name = 'user'
+#     max_num = 1
+#     extra = 0
+#     formset = UserProfileFormSet
 
 class UserAdmin(UserAdmin):
-    inlines = [UserProfileInline]
+    # inlines = [UserProfileInline]
     actions = ['make_active', 'make_inactive',]
     list_filter = ['is_active', 'is_staff', 'is_superuser', 'date_joined', 'last_login',]
     list_display = ['first_name', 'last_name', 'email', 'username', 'date_joined',]

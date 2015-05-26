@@ -1,9 +1,9 @@
-from coffin.shortcuts import render, render_to_response, Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, render_to_response, Http404, HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout as auth_logout
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
 from django.core.urlresolvers import reverse
 from django.forms.models import modelform_factory
 from apps.techpong.models import *

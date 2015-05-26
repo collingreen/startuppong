@@ -124,7 +124,7 @@ class Company(models.Model):
                 api_access_key = self.get_api_access_key()
                 )
 
-    @transaction.commit_on_success
+    @transaction.atomic
     def update_player_rank(self, player, rank, match):
         """Moves the given player into the given rank. Updates all the
         players currently at or below that rank by moving them down one."""
