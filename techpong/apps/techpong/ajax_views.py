@@ -222,3 +222,11 @@ def reset_api_access_key(request):
         key = request.user.profile.company.reset_api_access_key()
         return api_response(success=True, api_access_key=key)
     return api_response(success=False, error="Invalid company", error_code="invalid_company")
+
+# NOTE: uses new api tools instead of matching json_response above
+@login_required
+def set_viewed_notifications(request):
+    request.user.profile.last_viewed_notifications = datetime.datetime.now()
+    request.user.profile.save()
+    return api_response(success=True)
+

@@ -1,5 +1,13 @@
 {% extends 'techpong/base.html' %}
 
+{% block additional_header %}
+  {% if notifications|length > 0 %}
+    <button id="notifications_button" class="btn btn-warning" data-toggle="modal" data-target="#notificationsModal" title="New notifications available" data-tooltip data-placement="right">
+        <div class='fa fa-info'></div>
+    </button>
+  {% endif %}
+{% endblock %}
+
 {% block content %}
       <div class="wrapper">
             <!-- Left side column. contains the logo and sidebar -->
@@ -172,6 +180,7 @@
   </div>
 
   {% include 'techpong/partials/delete_match_modal.html' %}
+  {% include 'techpong/partials/notifications_modal.html' %}
 
 {% endblock content %}
 

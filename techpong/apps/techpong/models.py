@@ -25,6 +25,7 @@ class UserProfile(models.Model):
     model"""
     user = models.ForeignKey(User)
     company = models.ForeignKey('Company', null=True, blank=True)
+    last_viewed_notifications = models.DateTimeField(null=True, blank=True)
 
     def get_username(self): return self.user.username
     get_username.short_description = 'Username'
@@ -59,6 +60,18 @@ User.profile = property(user_get_profile)
 @receiver(post_save, sender=User)
 def save_profile_with_user(sender, instance, created, **kwargs):
     instance.get_profile().save()
+
+
+class Notification(models.Model):
+    class Meta:
+        ordering = ['-notification_time']
+    notification_time = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+
+    def __unicode__(self):
+        name = self.title
+        return name
 
 
 class Company(models.Model):

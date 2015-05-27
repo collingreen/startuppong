@@ -81,11 +81,20 @@ def dashboard(request, company_name):
     for player in company_info['players']:
         create_sparklines(player)
 
+    # notifications
+    notifications = Notification.objects.all()
+    if request.user.profile.last_viewed_notifications:
+        notifications = notifications.filter(
+            notification_time__gte=request.user.profile.last_viewed_notifications
+        )
+    notifications = notifications[:10]
+
     # render the dashboard
     return render(request, 'techpong/dashboard.html', {
                         "csrf_token": csrf(request)['csrf_token'],
                         'company': company,
-                        'info': company_info
+                        'info': company_info,
+                        'notifications': notifications
                     })
 
 @login_required

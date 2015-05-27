@@ -39,6 +39,15 @@
       });
     });
 
+    $('#notifications_close').on('click', function () {
+      apiCall({
+        url: $(this).attr('data-url'),
+        url_prefix: '',
+        callback: function (err, res) {
+          $('#notifications_button').hide();
+        }
+      });
+    });
 })();
 
 
