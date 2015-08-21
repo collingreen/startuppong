@@ -104,20 +104,6 @@
 {% block additional_js %}
 <script type='text/javascript'>
   $(document).on('ready', function(){
-      // reload page if the company changes
-      var company_latest_change = {{company.latest_change|date('U')}};
-      var pollForUpdatesDelay = 60000;
-      var check_for_updates_url = "{% url 'ajax_check_for_update' company_name=company.short_name %}";
-      pollForUpdates(
-        pollForUpdatesDelay, company_latest_change, check_for_updates_url
-      );
-      $(window).on('mousemove keydown', function(){
-        pollForUpdates(
-          pollForUpdatesDelay, company_latest_change, check_for_updates_url
-        );
-      });
-
-
       $('.player_sparkline_results').sparkline('html', {type: 'tristate'});
       $('.player_sparkline_ratings').sparkline();
       $('.player_sparkline_rank').sparkline();
